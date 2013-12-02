@@ -1,0 +1,22 @@
+
+.header {
+    position: relative;
+    background: #444;
+    padding: 10px;
+    color: #eee;
+    
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+.header > span {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-weight: bold;
+}
+
+.header a {
+    color: #129FEA;
+}
+

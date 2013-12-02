@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+
+<div class="pure-g-r">
+    <div class="header pure-u-1" ng-controller="LoginCtrl">
+        <a href="#/home"><img src="../images/nquire.png"/></a>
+        <span ng-if="status.login">{{status.nickname}} | <a href="{{link}}">logout</a></span>
+        <span ng-if="!status.login"><a href="{{link}}">login</a></span>
+    </div>
+</div>

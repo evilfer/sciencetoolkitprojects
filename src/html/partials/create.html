@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<div ng-controller="LoginCtrl">
+    <div ng-if="status.login">
+        <div ng-if="view.createOpen">
+            <form class="pure-form pure-form-stacked">
+                <fieldset>
+                    <legend>Create new project</legend>
+
+                    <label for="title">Title</label>
+                    <input id="title" type="text" placeholder="title" ng-model="editingProject.title" >
+
+                    <label for="description">Password</label>
+                    <textarea id="description" placeholder="description" ng-model="editingProject.description" ></textarea>
+
+                    <label for="isPublic" class="pure-checkbox">
+                        <input id="isPublic" type="checkbox" ng-model="editingProject.is_public"> Public project.
+                    </label>
+
+                    <button class="pure-button pure-button-primary" ng-disabled="editingProject.okButtonDisabled()" ng-click="editingProject.save()">{{editingProject.isNew() ? "Create" : "Save"}}</button>
+                    <button class="pure-button pure-button-primary" ng-click="view.closeProjectForm()">Cancel</button>
+                </fieldset>
+            </form>
+        </div>
+        <div ng-if="!view.createOpen">
+            <button class="pure-button pure-button-primary" ng-click="view.openProjectForm()">Create new project</button>
+        </div>
+
+        <ul>
+            <li class="project" ng-repeat="project in projects">
+                {{project.title}}
+                <button class="pure-button pure-button-xsmall" ng-click="view.openProjectForm(project.id)">Edit</button>
+            </li>
+        </ul>
+
+    </div>
+    <div ng-if="!status.login">
+        <p>Before you can start creating your own projects, you need to <a href="{{link}}">log in</a>.</p>
+    </div>
+</div>

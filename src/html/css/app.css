@@ -1,0 +1,61 @@
+
+html, body {
+    height: 100%;
+}
+
+.navigation-container {
+    position: absolute;
+    width: 100%;
+    top: 60px;
+    left: 0px;
+    z-index: 1000;
+}
+
+.content-container {
+    position: absolute;
+    width: 100%;
+    left: 0px;
+    top: 120px;
+    bottom: 0px;
+    overflow: auto;
+    z-index: 10;
+}
+
+.content {
+    margin: 0 auto;
+    max-width: 800px;
+    opacity: 0;
+
+    transition: opacity 1s;
+}
+
+.content.active {
+    opacity: 1;
+}
+
+
+h2 {
+    color: #aaa;
+}
+
+
+.pure-button-xsmall {
+    font-size: 70%;
+}
+
+.pure-button-small {
+    font-size: 85%;
+}
+
+.pure-button-large {
+    font-size: 110%;
+}
+
+.pure-button-xlarge {
+    font-size: 125%;
+}
+
+.project {
+    padding: 10px;
+    list-style-type: none;
+}

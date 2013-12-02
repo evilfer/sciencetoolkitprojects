@@ -1,0 +1,20 @@
+application: nquireprojects
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /api/.*
+  script: nsp.app.application
+- url: /
+  static_files: html/index.html
+  upload: html/index.html
+- url: /css
+  static_dir: html/css
+- url: /js
+  static_dir: html/js
+- url: /partials
+  static_dir: html/partials
+- url: /images
+  static_dir: html/images
