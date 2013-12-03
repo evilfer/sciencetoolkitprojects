@@ -1,5 +1,6 @@
 import webapp2
 import json
+import simplejson
 
 from google.appengine.api import users
 
@@ -8,22 +9,24 @@ from nsp.logic import project_manager
 class ProjectsApi(webapp2.RequestHandler):
 
     def get(self):
-        self.process_request("get")
+        data = self.request.GET
+        self.process_request("get", data)
 
     def post(self):
-        self.process_request("post")
+        data = simplejson.loads(self.request.body)
+        self.process_request("post", data)
 
 
-    def process_request(self, method):
+    def process_request(self, method, data):
         self.response.headers['Content-Type'] = 'application/json'
         result = None
 
         user = users.get_current_user()
 
-        action = self.request.get("action", "")
+        action = data['action']
 
         if action == "list":
-            only_owned = self.request.get("filter", None) == 'owned'
+            only_owned = data['filter'] == 'owned'
             projects = project_manager.list_projects(user, only_owned)
             result_projects = {}
             for p in projects:
@@ -35,45 +38,35 @@ class ProjectsApi(webapp2.RequestHandler):
                                                'is_public': p.is_public,
                                                'user_count': p.user_count,
                                                'im_member': bool(project_manager.get_subscription(user, p)),
-                                               'im_owner': user and user.user_id() == p.ownerid
+                                               'im_owner': user and user.user_id() == p.ownerid,
+                                               'profiles': []
                                                }
 
             result = {'projects': result_projects}
 
-
-        elif action == "create" or action == "update":
-            is_update = action == "update"
-            valid, data = self.read_project_params(is_update)
-            ok = project_manager.save_project(user, data, is_update) if valid else False
+        elif action == "create":
+            ok = project_manager.create_project(user, data['project']) if data['project'] else False
+            result = {'ok': ok}
+        elif action == "update":
+            ok = project_manager.update_project(user, data['project']) if data['project'] and data['project']['id'] else False
             result = {'ok': ok}
         elif action == "join" or action == "leave":
             projectid = self.read_project_id()
             project = project_manager.get_project(projectid)
 
-
-            if action == "join":
-                result = {'ok': project_manager.add_subscription(user, project)}
+            if not project:
+                ok = False
+            elif action == "join":
+                ok = project_manager.add_subscription(user, project)
             else:
                 project_manager.remove_subscription(user, project)
-                result = {'ok': True}
+                ok = True
+
+            result = {'ok': ok}
 
         json.dump(result, self.response)
 
 
-    def read_project_params(self, get_id=False):
-        params = {}
 
-        params['id'] = self.read_project_id() if get_id else None
-        params['title'] = self.request.get("title", "")
-        params['description'] = self.request.get("description", "")
-        params['is_public'] = self.request.get("is_public", "") == 'true'
-
-
-        valid = (not get_id or params['id']) and params['title']
-
-        return valid, params
-
-    def read_project_id(self):
-        return int(self.request.get("id", None))
 
 

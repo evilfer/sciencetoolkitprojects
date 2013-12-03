@@ -1,28 +1,28 @@
 <!DOCTYPE html>
-<html>
-    <head></head>
-    <body>
-        <ul>
-            <li class="project" ng-repeat="project in projects">
-                <div><b>{{project.title}}</b></div>
-                <div>{{project.description}}</div>
-                <div>Members: {{project.user_count}}</div>
-                <div ng-controller="LoginCtrl">
-                    <div ng-if="status.login">
-                        <div ng-if="project.im_owner">
-                            owner
-                        </div>
-                        <div ng-if="!project.im_owner">
-                            <div ng-if="project.im_member">
-                                <button class="pure-button pure-button-xsmall" ng-click="actions.leaveProject(project.id)">Edit</button>
-                            </div>
-                            <div ng-if="!project.im_member">
-                                <button class="pure-button pure-button-primary" ng-click="actions.joinProject(project.id)">Cancel</button>
-                            </div>
-                        </div>
+<ul>
+    <li class="project" ng-repeat="project in projects">
+        <div><b>{{project.title}}</b></div>
+        <div>{{project.description}}</div>
+        <div>Members: {{project.user_count}}</div>
+        <div ng-controller="LoginCtrl">
+            {{ joinActions.test() }}
+            <div ng-if="status.login">
+                <div ng-if="project.im_owner">
+                    owner
+                </div>
+                <div ng-if="!project.im_owner">
+                    <div ng-if="project.im_member">
+                        <button class="pure-button pure-button-xsmall" ng-click="joinActions.leave(project.id)">
+                            Leave
+                        </button>
+                    </div>
+                    <div ng-if="!project.im_member">
+                        <button class="pure-button pure-button-xsmall" ng-click="joinActions.join(project.id)">
+                            Join
+                        </button>
                     </div>
                 </div>
-            </li>
-        </ul>
-    </body>
-</html>
+            </div>
+        </div>
+    </li>
+</ul>

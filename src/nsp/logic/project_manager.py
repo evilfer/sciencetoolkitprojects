@@ -3,6 +3,8 @@ from google.appengine.ext import ndb
 
 from nsp.model.project import Project
 from nsp.model.subscription import Subscription
+from nsp.model.profile import DataLoggingProfile
+from nsp.model.profile import SensorInput
 
 from nsp.logic import access
 
@@ -12,16 +14,13 @@ def get_project(projectid):
 
     return project
 
-def save_project(user, data, is_update):
-    if is_update:
-        return update_project(user, data)
-    else:
-        return create_project(user, data)
-
 def create_project(user, data):
-    project = Project(ownerid=user.user_id(), title=data['title'], description=data['description'], is_public = data['is_public'], user_count=1)
+    project = Project(ownerid=user.user_id(), user_count=1)
+    _data2project(data, project)
     project.put()
+
     add_subscription(user, project, False)
+
     return True
 
 
@@ -29,15 +28,44 @@ def update_project(user, data):
     project = get_project(data['id'])
 
     if access.can_edit_project(user, project):
-        project.title = data['title'];
-        project.description = data['description'];
-        project.is_public = data['is_public'];
+        _data2project(data, project)
+        update_project_user_count(project, False)
         project.put()
         return True
     else:
         return False
 
-def list_projects(user, only_owned = False):
+def _data2project(data, project):
+    project.title = data['title']
+    project.description = data.get('description', '')
+    project.is_public = data.get('is_public', False)
+
+    profiles = []
+
+    profiles_data = data.get('profiles', [])
+    for profile_key in profiles_data:
+        profile_data = profiles_data[profile_key]
+        inputs = []
+        inputs_data = profile_data.get('inputs', [])
+        for input_key in inputs_data:
+            input_data = inputs_data[input_key]
+            title = input_data.get('sensor', '')
+            rate = _read_float(input_data, 'rate')
+            inputs.append(SensorInput(sensor=title, rate=rate))
+
+        title = profile_data.get('title', '')
+        profiles.append(DataLoggingProfile(title=title, inputs=inputs))
+
+
+    project.profiles = profiles
+
+def _read_float(data, key, default_value=.0):
+    try:
+        return float(data.get(key, default_value))
+    except ValueError:
+        return default_value
+
+def list_projects(user, only_owned=False):
     query = access.filter_project_list_query(user, only_owned)
     projects = query.fetch()
     return projects
@@ -68,7 +96,7 @@ def remove_subscription(user, project):
 
 def update_project_user_count(project, put=True):
     if project:
-        count = Subscription.query(Subscription.projectid==project.key.id()).count()
+        count = Subscription.query(Subscription.projectid == project.key.id()).count()
         project.user_count = count
         if put:
             project.put()
