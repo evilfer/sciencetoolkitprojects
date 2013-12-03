@@ -8,6 +8,8 @@ class Project(ndb.Model):
     title = ndb.StringProperty()
     description = ndb.StringProperty()
     is_public = ndb.BooleanProperty()
+    user_count = ndb.IntegerProperty()
+
 
 
 

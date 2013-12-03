@@ -42,11 +42,9 @@ function updateURLParameter(url, param, paramVal) {
         }
     }
 
-    if (theAnchor) {
-        paramVal += "#" + theAnchor;
-    }
+    var value = encodeURIComponent(theAnchor ? paramVal + "#" + theAnchor : paramVal);
 
-    var rows_txt = temp + "" + param + "=" + encodeURIComponent(paramVal);
+    var rows_txt = temp + "" + param + "=" + value;
     return baseURL + "?" + newAdditionalURL + rows_txt;
 }
 
