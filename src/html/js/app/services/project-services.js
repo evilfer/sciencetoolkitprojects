@@ -3,50 +3,36 @@
 var projectServices = angular.module('projectServices', []);
 
 projectServices.factory('ProjectList', ['$http', function($http) {
-    var defaultPeriod = 1000;
     return {
       getList: function(filter) {
+
         var service = {
-          _filter: filter,
           projects: {},
-          _updatePeriod: defaultPeriod,
-          _updateTimeout: null,
-          _runUpdate: function() {
-            var self = this;
-
-            window.clearTimeout(this._updateTimeout);
-
-            $http.get('/api/projects', {
-              params: {
-                action: 'list',
-                filter: this._filter
-              }
-            }).then(function(result) {
-              self._answerReceived(result.data.projects);
-            });
-          },
-          _answerReceived: function(list) {
-            var self = this;
-            if (!angular.equals(this.projects, list)) {
-              this.projects = list;
-              this._updatePeriod = defaultPeriod;
-            } else {
-              this._updatePeriod += defaultPeriod;
-            }
-
-            window.clearTimeout(this._updateTimeout);
-            this._updateTimeout = window.setTimeout(function() {
-              self._runUpdate();
-            }, this._updatePeriod);
-          },
           update: function() {
-            this._updatePeriod = defaultPeriod;
-            this._runUpdate();
+            this.updater.updateNow();
           },
           destroy: function() {
-            window.clearTimeout(this._updateTimeout);
+            this.updater.destroy();
+          },
+          updateList: function(data) {
+            var newData = !angular.equals(service.projects, data.projects);
+
+            if (newData) {
+              service.projects = data.projects;
+            }
+
+            return newData;
           }
         };
+
+        service.updater = new nspUpdater($http, '/api/projects', {
+          params: {
+            action: 'list',
+            filter: filter
+          }
+        }, function(data) {
+          return service.updateList(data);
+        });
 
         service.update();
 
@@ -57,10 +43,9 @@ projectServices.factory('ProjectList', ['$http', function($http) {
 
 projectServices.factory('ProjectCreate', ['$http', function($http) {
     return {
-      create: function(projectList) {
-
+      create: function(updateListener) {
         var service = {
-          _projectList: projectList,
+          _updateListener: updateListener,
           working: false,
           submit: function(project) {
             service.working = true;
@@ -73,8 +58,8 @@ projectServices.factory('ProjectCreate', ['$http', function($http) {
             console.log(data);
 
             return service._post(data, function(result) {
-              service._projectList.update();
               service.working = false;
+              service._update();
               return result.data;
             });
           },
@@ -93,8 +78,8 @@ projectServices.factory('ProjectCreate', ['$http', function($http) {
             };
 
             return service._post(data, function(result) {
-              service._projectList.update();
               service.working = false;
+              service._update();
               return result.data;
             });
           },
@@ -103,8 +88,70 @@ projectServices.factory('ProjectCreate', ['$http', function($http) {
           },
           _post: function(data, success) {
             return $http.post('/api/projects', data).then(success);
+          },
+          _update: function() {
+            if (this._updateListener) {
+              this._updateListener.update();
+            }
           }
         };
+
+        return service;
+      }
+    };
+  }]);
+
+projectServices.factory('ProjectGet', ['$http', function($http) {
+    var service = {
+      getProject: function(projectId) {
+        return $http.get('/api/projects', {
+          params: {
+            action: 'get',
+            id: projectId
+          }
+        }).then(function(result) {
+          return result.data;
+        });
+      }
+    };
+
+    return service;
+  }]);
+
+projectServices.factory('ProjectGetSync', ['$http', function($http) {
+    return {
+      get: function(projectId) {
+
+        var service = {
+          projectId: projectId,
+          data: {},
+          update: function() {
+            this.updater.updateNow();
+          },
+          destroy: function() {
+            this.updater.destroy();
+          },
+          _receiveUpdate: function(data) {
+            var newData = !angular.equals(service.data, data);
+
+            if (newData) {
+              service.data = data;
+            }
+
+            return newData;
+          }
+        };
+
+        service.updater = new nspUpdater($http, '/api/projects', {
+          params: {
+            action: 'get',
+            id: service.projectId
+          }
+        }, function(data) {
+          return service._receiveUpdate(data);
+        });
+
+        service.update();
 
         return service;
       }

@@ -14,10 +14,10 @@ def filter_project_list_query(user, only_owned):
             return Project.query(Project.is_public == True)
 
 def can_view_project(user, project):
-    return user and project and (project.is_public or project.ownerid == user.user_id())
+    return project and (project.is_public or (user and project.ownerid == user.user_id()))
 
 def can_edit_project(user, project):
     return user and project and project.ownerid == user.user_id()
 
 def can_join_project(user, project):
-    return can_view_project(user, project)
+    return user and project and (project.is_public or project.ownerid == user.user_id())

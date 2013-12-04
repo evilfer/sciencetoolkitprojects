@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<div ng-if="!ready">
+    loading...
+</div>
+
+<div ng-if="ready">
+    <div ng-if="bad">error</div>
+    <div ng-if="!bad" ng-controller="CreateEditCtrl">
+
+        <form class="pure-form pure-form-stacked">
+            <fieldset>
+                <legend>Project description</legend>
+
+                <label for="title">Title</label>
+                <input id="title" type="text" placeholder="title" ng-model="project.title" >
+
+                <label for="description">Password</label>
+                <textarea id="description" placeholder="description" ng-model="project.description" ></textarea>
+
+                <label for="isPublic" class="pure-checkbox">
+                    <input id="isPublic" type="checkbox" ng-model="project.is_public"> Public project.
+                </label>
+
+                <legend>Profiles</legend>
+
+                <ul style="list-style-type: none">
+                    <li ng-repeat="profile in project.profiles">
+                        <input type="text" placeholder="title" ng-model="profile.title" >
+                        <ul style="list-style-type: none">
+                            <li ng-repeat="input in profile.inputs">
+                                <input type="text" placeholder="title" ng-model="input.sensor" >
+                                {{profile.id}} {{input.id}}
+                                <button class="pure-button pure-button-xsmall" ng-click="projectActions.deleteProfileInput(profile.id, input.id)">Delete</button>
+                            </li>
+                        </ul>
+                        <button class="pure-button pure-button-xsmall" ng-click="projectActions.addProfileInput(profile.id)">Add sensor</button>
+                        <button class="pure-button pure-button-xsmall" ng-click="projectActions.deleteProfile(profile.id)">Delete</button>
+                    </li>
+                </ul>
+
+                <div style="margin-bottom:20px">
+                    <button class="pure-button pure-button-xsmall" ng-click="projectActions.addProfile()">Add profile</button>
+                </div>
+
+                <button class="pure-button pure-button-primary" ng-disabled="okButtonDisabled()" ng-click="projectActions.save()">{{isNew ? "Create" : "Save"}}</button>
+                <button class="pure-button pure-button-primary" ng-click="actions.cancel()">Cancel</button>
+            </fieldset>
+        </form>
+    </div>
+
+</div>

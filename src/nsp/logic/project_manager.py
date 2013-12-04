@@ -8,11 +8,19 @@ from nsp.model.profile import SensorInput
 
 from nsp.logic import access
 
-def get_project(projectid):
+def _get_project(projectid):
     key = ndb.Key(Project, projectid)
     project = key.get()
 
     return project
+
+def view_project(user, data):
+    project = _get_project(_read_int(data, 'id', 0))
+    if access.can_view_project(user, project):
+        return project
+    else:
+        return None
+
 
 def create_project(user, data):
     project = Project(ownerid=user.user_id(), user_count=1)
@@ -21,11 +29,11 @@ def create_project(user, data):
 
     add_subscription(user, project, False)
 
-    return True
+    return True, project.key.id()
 
 
 def update_project(user, data):
-    project = get_project(data['id'])
+    project = _get_project(_read_int(data, 'id', 0))
 
     if access.can_edit_project(user, project):
         _data2project(data, project)
@@ -42,19 +50,17 @@ def _data2project(data, project):
 
     profiles = []
 
-    profiles_data = data.get('profiles', [])
-    for profile_key in profiles_data:
-        profile_data = profiles_data[profile_key]
+    for profile_data in data.get('profiles', []):
         inputs = []
-        inputs_data = profile_data.get('inputs', [])
-        for input_key in inputs_data:
-            input_data = inputs_data[input_key]
+        for input_data in profile_data.get('inputs', []):
+            input_id = input_data.get('id', 0)
             title = input_data.get('sensor', '')
             rate = _read_float(input_data, 'rate')
-            inputs.append(SensorInput(sensor=title, rate=rate))
+            inputs.append(SensorInput(id=input_id, sensor=title, rate=rate))
 
         title = profile_data.get('title', '')
-        profiles.append(DataLoggingProfile(title=title, inputs=inputs))
+        profile_id = profile_data.get('id', 0)
+        profiles.append(DataLoggingProfile(id=profile_id, title=title, inputs=inputs))
 
 
     project.profiles = profiles
@@ -62,6 +68,12 @@ def _data2project(data, project):
 def _read_float(data, key, default_value=.0):
     try:
         return float(data.get(key, default_value))
+    except ValueError:
+        return default_value
+
+def _read_int(data, key, default_value=0):
+    try:
+        return int(data.get(key, default_value))
     except ValueError:
         return default_value
 

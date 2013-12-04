@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<div ng-controller="MembershipCtrl">
+    <div ng-if="loginStatus.login">
+        <div ng-if="project.im_owner">
+            owner
+        </div>
+        <div ng-if="!project.im_owner">
+            <div ng-if="project.im_member">
+                <button class="pure-button pure-button-xsmall" ng-click="joinActions.leave(project.id)">
+                    Leave
+                </button>
+            </div>
+            <div ng-if="!project.im_member">
+                <button class="pure-button pure-button-xsmall" ng-click="joinActions.join(project.id)">
+                    Join
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

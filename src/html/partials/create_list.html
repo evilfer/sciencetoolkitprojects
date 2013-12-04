@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+
+<button class="pure-button pure-button-primary" ng-click="actions.newProject()">Create new project</button>
+
+<ul>
+    <li class="project" ng-repeat="project in projects">
+        {{project.title}}
+        <button class="pure-button pure-button-xsmall" ng-click="actions.openProject(project.id)">Edit</button>
+    </li>
+</ul>

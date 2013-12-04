@@ -2,71 +2,9 @@
 
 <div ng-controller="LoginCtrl">
     <div ng-if="status.login">
-        <div ng-if="view.formOpen">
-            <form class="pure-form pure-form-stacked">
-                <fieldset>
-                    <legend>Project description</legend>
-
-                    <label for="title">Title</label>
-                    <input id="title" type="text" placeholder="title" ng-model="editingProject.project.title" >
-
-                    <label for="description">Password</label>
-                    <textarea id="description" placeholder="description" ng-model="editingProject.project.description" ></textarea>
-
-                    <label for="isPublic" class="pure-checkbox">
-                        <input id="isPublic" type="checkbox" ng-model="editingProject.project.is_public"> Public project.
-                    </label>
-
-                    <legend>Profiles</legend>
-
-                    <ul style="list-style-type: none">
-                        <li ng-repeat="profile in editingProject.project.profiles">
-                            <input type="text" placeholder="title" ng-model="profile.title" >
-                            <ul style="list-style-type: none">
-                                <li ng-repeat="input in profile.inputs">
-                                    <input type="text" placeholder="title" ng-model="input.sensor" >
-                                    {{profile.id}} {{input.id}}
-                                    <button class="pure-button pure-button-xsmall" ng-click="editingProject.deleteProfileInput(profile.id, input.id)">Delete</button>
-                                </li>
-                            </ul>
-                            <button class="pure-button pure-button-xsmall" ng-click="editingProject.addProfileInput(profile.id)">Add sensor</button>
-                            <button class="pure-button pure-button-xsmall" ng-click="editingProject.deleteProfile(profile.id)">Delete</button>
-                        </li>
-                    </ul>
-
-                    <div style="margin-bottom:20px">
-                        <button class="pure-button pure-button-xsmall" ng-click="editingProject.addProfile()">Add profile</button>
-                    </div>
-                    <!--
-                    
-                                        <label for="hasSensor" class="pure-checkbox">
-                                            <input id="hasSensor" type="checkbox" ng-model="editingProject.edit_sensor"> Use sensor.
-                                        </label>
-                    
-                                        <div ng-if="editingProject.edit_sensor">
-                                            <label for="sensor">Sensor</label>
-                                            <input id="sensor" type="text" placeholder="sensor" ng-model="editingProject.sensor.title" >
-                                            <label for="rate">Rate</label>
-                                            <input id="rate" type="number" step="any" placeholder="rate" ng-model="editingProject.sensor.rate" >
-                                        </div>
-                    -->
-
-                    <button class="pure-button pure-button-primary" ng-disabled="editingProject.okButtonDisabled()" ng-click="editingProject.save()">{{editingProject.isNew() ? "Create" : "Save"}}</button>
-                    <button class="pure-button pure-button-primary" ng-click="view.closeProjectForm()">Cancel</button>
-                </fieldset>
-            </form>
-        </div>
-        <div ng-if="!view.formOpen">
-            <button class="pure-button pure-button-primary" ng-click="view.openProjectForm()">Create new project</button>
-        </div>
-
-        <ul>
-            <li class="project" ng-repeat="project in projects">
-                {{project.title}}
-                <button class="pure-button pure-button-xsmall" ng-click="view.openProjectForm(project.id)">Edit</button>
-            </li>
-        </ul>
-
+        
+        <div data-ui-view></div>
+    
     </div>
     <div ng-if="!status.login">
         <p>Before you can start creating your own projects, you need to <a href="{{link}}">log in</a>.</p>
