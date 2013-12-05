@@ -4,8 +4,6 @@ var myApp = angular.module('myApp');
 
 myApp.controller('ProjectModifyCtrl', function($scope, ProjectCreate) {
 
-  console.log($scope.listsrv);
-  
   $scope.createsrv = ProjectCreate.create($scope.projectUpdateListener);
   $scope.working = false;
 

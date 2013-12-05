@@ -1,22 +1,30 @@
 
 
-var nspUpdater = function(httpSrv, url, data, success) {
+var nspUpdater = function(httpSrv, url, callbacks) {
   this.defaultPeriod = 1000;
   this.updatePeriod = this.defaultPeriod;
   this.updateTimeout = null;
-  
+
   this.httpSrv = httpSrv;
   this.url = url;
-  this.data = data;
-  this.success = success;
+  this.working = false;
+  
+  this.callbacks = callbacks;
+  this.data = null;
 };
 
-nspUpdater.prototype.setCallback = function(successCallback) {
-  this.success = successCallback;
+nspUpdater.prototype.setRequestData = function(data) {
+  this.data = {params: data};
+};
+
+nspUpdater.prototype.stop = function() {
+  this.working = false;
+  window.clearTimeout(this.updateTimeout);
 };
 
 
-nspUpdater.prototype.updateNow = function() {
+nspUpdater.prototype.updateNow = function(periodic) {
+  this.working = this.working || periodic;
   this.updatePeriod = this.defaultPeriod;
   this._runUpdate();
 };
@@ -27,23 +35,30 @@ nspUpdater.prototype.destroy = function() {
 
 nspUpdater.prototype._runUpdate = function() {
   var self = this;
+  
+  if (self.callbacks.onUpdate) {
+    self.callbacks.onUpdate();
+  }
 
   window.clearTimeout(this.updateTimeout);
-  
+
   this.httpSrv.get(this.url, this.data).then(function(result) {
-    var resetUpdatePeriod = self.success && self.success(result.data);
-    
-    if (resetUpdatePeriod) {
-      self.updatePeriod = self.defaultPeriod;
-    } else {
-      self.updatePeriod += self.defaultPeriod;
+    var resetUpdatePeriod = self.callbacks.onSuccess && self.callbacks.onSuccess(result.data);
+
+    if (this.working) {
+
+      if (resetUpdatePeriod) {
+        self.updatePeriod = self.defaultPeriod;
+      } else {
+        self.updatePeriod += self.defaultPeriod;
+      }
+
+      window.clearTimeout(self.updateTimeout);
+
+      self.updateTimeout = window.setTimeout(function() {
+        self._runUpdate();
+      }, self.updatePeriod);
     }
-
-    window.clearTimeout(self.updateTimeout);
-
-    self.updateTimeout = window.setTimeout(function() {
-      self._runUpdate();
-    }, self.updatePeriod);
   });
 
 };

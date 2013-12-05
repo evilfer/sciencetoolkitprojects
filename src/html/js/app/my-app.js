@@ -1,6 +1,6 @@
 /*global console, angular*/
 
-var myApp = angular.module('myApp', ['loginServices', 'projectServices', /* 'directive.g+signin',*/ 'ui.router']);
+var myApp = angular.module('myApp', ['nspServices', /* 'directive.g+signin',*/ 'ui.router']);
 
 
 myApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
@@ -21,7 +21,7 @@ myApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $
             .state('explore', {
               url: '/explore',
               templateUrl: 'partials/explore.html',
-              controller: 'ExploreCtrl'
+              controller: 'ExploreListCtrl'
             })
             .state('explore-project', {
               url: '/explore/{projectId}',

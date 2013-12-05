@@ -2,21 +2,23 @@
 
 var myApp = angular.module('myApp');
 
-myApp.controller('LoginCtrl', function($scope, LoginStatus, $location) {
+myApp.controller('LoginCtrl', function($scope, LoginService, $location) {
+  $scope.watchers = new nspWatchers();
 
-    $scope.location = $location;
+  $scope.location = $location;
 
-    var statusAnswer = LoginStatus.getStatus();
-    if (statusAnswer.then) {
-        statusAnswer.then(function(data) {
-            $scope.status = data;
-            $scope.link = $scope.status.link;
-            // updateURLParameter($scope.status.link, "continue", $scope.destination);
-        });
-    } else {
-        $scope.status = statusAnswer;
-        $scope.link = $scope.status.link;
-        // updateURLParameter($scope.status.link, "continue", $scope.destination);
-    }
+  $scope.loginSrv = LoginService;
+
+  var update = function() {
+    $scope.ready = $scope.loginSrv.ready;
+    $scope.status = $scope.loginSrv.status;
+  };
+
+  update();
+  $scope.watchers.watch($scope, 'loginSrv.ready', update);
+
+  $scope.$on('$destroy', function() {
+    $scope.watchers.unwatch();
+  });
 
 });
