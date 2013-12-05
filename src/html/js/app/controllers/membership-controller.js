@@ -3,7 +3,7 @@
 
 var myApp = angular.module('myApp');
 
-myApp.controller('MembershipCtrl', function($scope, LoginService, ModifyProjectService) {
+myApp.controller('MembershipCtrl', function($scope, $state, LoginService, ModifyProjectService) {
   $scope.watchers = new nspWatchers();
 
   $scope.loginSrv = LoginService;
@@ -23,6 +23,9 @@ myApp.controller('MembershipCtrl', function($scope, LoginService, ModifyProjectS
     },
     leave: function(projectId) {
       $scope.modifyProjectSrv.leaveProject(projectId);
+    },
+    edit: function(projectId) {
+      $state.go('create.edit', {projectId: projectId});
     }
   };
 

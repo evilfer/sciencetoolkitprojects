@@ -1,5 +1,17 @@
 <!DOCTYPE html>
 
-{{ project}}
 
+{{project.title}}
 <div ng-include="'partials/project_membership.html'"></div>
+{{project.description}}
+
+<ul>
+    <li ng-repeat="profile in project.profiles">
+        {{profile.title}}
+        <ul>
+            <li ng-repeat="input in profile.inputs">
+                {{input.sensor}}: {{input.rate}} samples/s.
+            </li>
+        </ul>
+    </li>
+</ul>

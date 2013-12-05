@@ -25,11 +25,14 @@
 
                 <ul style="list-style-type: none">
                     <li ng-repeat="profile in project.profiles">
+                        <label>Profile title</label>
                         <input type="text" placeholder="title" ng-model="profile.title" >
                         <ul style="list-style-type: none">
                             <li ng-repeat="input in profile.inputs">
+                                <label>Sensor</label>
                                 <input type="text" placeholder="title" ng-model="input.sensor" >
-                                {{profile.id}} {{input.id}}
+                                <label>Sampling rate</label>
+                                <input type="text" placeholder="number" step="any" ng-model="input.rate" >
                                 <button class="pure-button pure-button-xsmall" ng-click="projectActions.deleteProfileInput(profile.id, input.id)">Delete</button>
                             </li>
                         </ul>

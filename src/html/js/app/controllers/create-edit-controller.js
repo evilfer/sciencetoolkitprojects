@@ -15,6 +15,7 @@ myApp.controller('CreateEditCtrl', function($scope, $state, $stateParams, Projec
 
     $scope.watchers.watch($scope, 'syncService.data', function() {
       $scope.project = $scope.syncService.data.project;
+      $scope.original = nspClone($scope.project);
       $scope.bad = false;
       $scope.ready = true;
     });
@@ -41,6 +42,7 @@ myApp.controller('CreateEditCtrl', function($scope, $state, $stateParams, Projec
     $scope.awaitingDataAnswer = $scope.modifyProjectSrv.working;
   });
 
+  
 
   $scope.actions = {
     cancel: function() {
@@ -49,7 +51,7 @@ myApp.controller('CreateEditCtrl', function($scope, $state, $stateParams, Projec
   };
 
   $scope.okButtonDisabled = function() {
-    return !$scope.ready || $scope.awaitingDataAnswer || !$scope.project || !Boolean($scope.project.title);
+    return !$scope.ready || $scope.awaitingDataAnswer || !$scope.project || !Boolean($scope.project.title) || (!$scope.request.isNew && angular.equals($scope.project, $scope.original));
   };
 
   $scope.projectActions = {
@@ -60,6 +62,8 @@ myApp.controller('CreateEditCtrl', function($scope, $state, $stateParams, Projec
           console.log(data);
           if ($scope.request.isNew) {
             $state.go('create.edit', {projectId: data.id});
+          } else {
+            $scope.original = nspClone($scope.project);
           }
         });
       }

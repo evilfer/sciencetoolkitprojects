@@ -15,9 +15,11 @@ angular.module('nspServices').factory('SyncService', ['$http', function($http) {
         service.updating = true;
       },
       onSuccess: function(data) {
-        service.data = data;
-        service.ready = true;
-        service.updating = false;
+        if (!angular.equals(data, service.data)) {
+          service.data = data;
+          service.ready = true;
+          service.updating = false;
+        }
       }
     });
 
