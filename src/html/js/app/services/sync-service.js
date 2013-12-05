@@ -20,11 +20,11 @@ angular.module('nspServices').factory('SyncService', ['$http', function($http) {
         service.updating = false;
       }
     });
-    
+
     service.stop = function() {
       this.updater.stop();
     };
-    
+
     service._update = function(data, periodic) {
       this.updater.stop();
       this.updater.setRequestData(data);
@@ -34,13 +34,15 @@ angular.module('nspServices').factory('SyncService', ['$http', function($http) {
     service.getProject = function(projectId, periodic) {
       this._update({action: 'get', id: projectId}, periodic);
     };
-    
+
     service.getList = function(filter, periodic) {
       this._update({action: 'list', filter: filter}, periodic);
     };
-    
+
     service.somethingChanged = function() {
-      this.updater.updateNow();
+      if (this.updater.working) {
+        this.updater.updateNow();
+      }
     };
 
 

@@ -2,16 +2,45 @@
 
 var myApp = angular.module('myApp');
 
-myApp.controller('CreateEditCtrl', function($scope, $state, ProjectCreate) {
-  $scope.awaitingDataAnswer = false;
-  
-  $scope.createsrv = ProjectCreate.create();
+myApp.controller('CreateEditCtrl', function($scope, $state, $stateParams, ProjectIdService, SyncService, ModifyProjectService) {
+  $scope.request = ProjectIdService.check($stateParams);
 
-  $scope.watches = [
-    $scope.$watch('createsrv.working', function() {
-      $scope.awaitingDataAnswer = $scope.createsrv.working;
-    })
-  ];
+  $scope.watchers = new nspWatchers();
+
+  $scope.syncService = SyncService;
+
+  if ($scope.request.projectId) {
+    $scope.project = null;
+    $scope.ready = false;
+
+    $scope.watchers.watch($scope, 'syncService.data', function() {
+      $scope.project = $scope.syncService.data.project;
+      $scope.bad = false;
+      $scope.ready = true;
+    });
+
+    $scope.syncService.getProject($scope.request.projectId, false);
+  } else {
+    $scope.project = {};
+    $scope.bad = false;
+    $scope.ready = true;
+  }
+
+  $scope.$on('$destroy', function() {
+    $scope.syncService.stop();
+    $scope.watchers.unwatch();
+  });
+
+
+  $scope.modifyProjectSrv = ModifyProjectService;
+
+
+  $scope.awaitingDataAnswer = false;
+
+  $scope.watchers.watch($scope, 'modifyProjectSrv.working', function() {
+    $scope.awaitingDataAnswer = $scope.modifyProjectSrv.working;
+  });
+
 
   $scope.actions = {
     cancel: function() {
@@ -20,14 +49,16 @@ myApp.controller('CreateEditCtrl', function($scope, $state, ProjectCreate) {
   };
 
   $scope.okButtonDisabled = function() {
-    return !$scope.ready || $scope.awaitingDataAnswer || !Boolean($scope.$parent.project.title);
+    return !$scope.ready || $scope.awaitingDataAnswer || !$scope.project || !Boolean($scope.project.title);
   };
 
   $scope.projectActions = {
     save: function() {
       if ($scope.$parent.ready && !$scope.awaitingDataAnswer) {
-        $scope.createsrv.submit($scope.$parent.project).then(function(data) {
-          if ($scope.$parent.isNew) {
+        $scope.modifyProjectSrv.submit($scope.project).then(function(data) {
+          console.log('save answer');
+          console.log(data);
+          if ($scope.request.isNew) {
             $state.go('create.edit', {projectId: data.id});
           }
         });
@@ -78,11 +109,4 @@ myApp.controller('CreateEditCtrl', function($scope, $state, ProjectCreate) {
     }
   };
 
-  $scope.$on('$destroy', function() {
-    for (var i = 0; i < $scope.watches.length; i++) {
-      $scope.watches[i]();
-    }
-
-    $scope.createsrv.destroy();
-  });
 });

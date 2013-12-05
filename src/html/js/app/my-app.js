@@ -26,7 +26,7 @@ myApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $
             .state('explore-project', {
               url: '/explore/{projectId}',
               templateUrl: 'partials/view_project.html',
-              controller: 'ProjectSyncCtrl'
+              controller: 'ProjectViewCtrl'
             })
             .state('create', {
               url: '/create',
@@ -41,12 +41,12 @@ myApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $
             .state('create.new', {
               url: '/new',
               templateUrl: 'partials/create_edit.html',
-              controller: 'ProjectCtrl'
+              controller: 'CreateEditCtrl'
             })
             .state('create.edit', {
               url: '/edit/{projectId}',
               templateUrl: 'partials/create_edit.html',
-              controller: 'ProjectCtrl'
+              controller: 'CreateEditCtrl'
             });
 
   }]);

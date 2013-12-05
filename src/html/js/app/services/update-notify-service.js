@@ -1,7 +1,7 @@
 /*global angular*/
 
 
-angular.module('nspServices').factory('UpdateNotifyService', [function(SyncService) {
+angular.module('nspServices').factory('UpdateNotifyService', ['SyncService', function(SyncService) {
 
     var service = {
       somethingChanged: function() {

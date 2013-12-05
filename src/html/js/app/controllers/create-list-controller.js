@@ -1,8 +1,8 @@
-/*global angular*/
+/*global angular, Math*/
 
 var myApp = angular.module('myApp');
 
-myApp.controller('ExploreListCtrl', function($scope, SyncService, $state) {
+myApp.controller('CreateListCtrl', function($scope, $state, SyncService) {
   $scope.watchers = new nspWatchers();
 
   $scope.projects = {};
@@ -13,9 +13,13 @@ myApp.controller('ExploreListCtrl', function($scope, SyncService, $state) {
     $scope.projects = $scope.syncService.data.projects;
   });
 
-  $scope.exploreActions = {
-    open: function(projectId) {
-      $state.go('explore-project', {projectId: projectId});
+
+  $scope.actions = {
+    newProject: function() {
+      $state.go('create.new');
+    },
+    openProject: function(projectId) {
+      $state.go('create.edit', {projectId: projectId});
     }
   };
 
@@ -24,7 +28,6 @@ myApp.controller('ExploreListCtrl', function($scope, SyncService, $state) {
     $scope.watchers.unwatch();
   });
 
-  $scope.syncService.getList(null, true);
+  $scope.syncService.getList('owned');
 
 });
-

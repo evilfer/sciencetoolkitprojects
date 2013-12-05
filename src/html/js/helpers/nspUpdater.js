@@ -44,8 +44,8 @@ nspUpdater.prototype._runUpdate = function() {
 
   this.httpSrv.get(this.url, this.data).then(function(result) {
     var resetUpdatePeriod = self.callbacks.onSuccess && self.callbacks.onSuccess(result.data);
-
-    if (this.working) {
+    
+    if (self.working) {
 
       if (resetUpdatePeriod) {
         self.updatePeriod = self.defaultPeriod;

@@ -1,6 +1,7 @@
 /*global angular*/
 
-angular.module('nspServices').factory('ModifyProjectService', ['$http', function($http, UpdateNotifyService) {
+angular.module('nspServices').factory('ModifyProjectService', ['$http', 'UpdateNotifyService', function($http, UpdateNotifyService) {
+    console.log(UpdateNotifyService);
 
     var service = {
       working: false
@@ -10,9 +11,10 @@ angular.module('nspServices').factory('ModifyProjectService', ['$http', function
       this.working = true;
       var self = this;
 
-      return $http.post('/api/projects', data).then(function() {
+      return $http.post('/api/projects', data).then(function(result) {
         self.working = false;
         UpdateNotifyService.somethingChanged();
+        return result.data;
       });
     };
 
