@@ -42,10 +42,19 @@ class ProjectsApi(webapp2.RequestHandler):
             result = {'projects': result_projects}
 
         elif action == "create":
-            ok, projectid = project_manager.create_project(user, data['project']) if data['project'] else False
+            ok, projectid = project_manager.create_project(user, data)
             result = {'ok': ok, 'id': projectid}
         elif action == "update":
-            ok = project_manager.update_project(user, data['project']) if data['project'] and data['project']['id'] else False
+            ok = project_manager.update_project(user, data)
+            result = {'ok': ok}
+        elif action == "changevisibility":
+            ok, is_public = project_manager.change_visibility(user, data)
+            result = {'ok': ok, 'is_public': is_public}
+        elif action == 'submitprofile':
+            ok = project_manager.update_profiles(user, data)
+            result = {'ok': ok}
+        elif action == "changeprofilevisibility":
+            ok = project_manager.change_profile_visibility(user, data)
             result = {'ok': ok}
         elif action == "join" or action == "leave":
             project = project_manager.view_project(user, data)
@@ -77,9 +86,18 @@ class ProjectsApi(webapp2.RequestHandler):
         if detailed:
             result_project['profiles'] = []
             for profile in project.profiles:
-                result_profile = {'id': profile.id, 'title': profile.title, 'inputs': []}
+                result_profile = {
+                                  'id': profile.id,
+                                  'is_active': profile.is_active,
+                                  'title': profile.title,
+                                  'inputs': []
+                                  }
                 for profile_input in profile.inputs:
-                    result_input = {'id': profile_input.id, 'sensor': profile_input.sensor, 'rate': profile_input.rate}
+                    result_input = {
+                                    'id': profile_input.id,
+                                    'sensor': profile_input.sensor,
+                                    'rate': profile_input.rate
+                                    }
                     result_profile['inputs'].append(result_input)
 
                 result_project['profiles'].append(result_profile)

@@ -59,3 +59,9 @@ h2 {
     padding: 10px;
     list-style-type: none;
 }
+
+.profile {
+    padding-bottom: 10px;
+    border-bottom: 1px solid lightgrey;
+    margin-bottom: 10px;
+}

@@ -7,8 +7,9 @@ var nspUpdater = function(httpSrv, url, callbacks) {
 
   this.httpSrv = httpSrv;
   this.url = url;
-  this.working = false;
-  
+  this.periodicUpdates = false;
+  this.onChangeUpdates = false;
+
   this.callbacks = callbacks;
   this.data = null;
 };
@@ -23,10 +24,21 @@ nspUpdater.prototype.stop = function() {
 };
 
 
-nspUpdater.prototype.updateNow = function(periodic) {
-  this.working = this.working || periodic;
+nspUpdater.prototype.updateNow = function(periodic, onchange) {
+  var _periodic = Boolean(periodic);
+  var _onchange = typeof onchange === 'undefined' ? _periodic : Boolean(onchange);
+
+  this.periodicUpdates = this.periodicUpdates || _periodic;
+  this.onChangeUpdates = _onchange;
   this.updatePeriod = this.defaultPeriod;
   this._runUpdate();
+};
+
+nspUpdater.prototype.somethingChanged = function() {
+  if (this.onChangeUpdates) {
+    this.updatePeriod = this.defaultPeriod;
+    this._runUpdate();
+  }
 };
 
 nspUpdater.prototype.destroy = function() {
@@ -35,7 +47,7 @@ nspUpdater.prototype.destroy = function() {
 
 nspUpdater.prototype._runUpdate = function() {
   var self = this;
-  
+
   if (self.callbacks.onUpdate) {
     self.callbacks.onUpdate();
   }
@@ -44,8 +56,8 @@ nspUpdater.prototype._runUpdate = function() {
 
   this.httpSrv.get(this.url, this.data).then(function(result) {
     var resetUpdatePeriod = self.callbacks.onSuccess && self.callbacks.onSuccess(result.data);
-    
-    if (self.working) {
+
+    if (self.periodicUpdates) {
 
       if (resetUpdatePeriod) {
         self.updatePeriod = self.defaultPeriod;

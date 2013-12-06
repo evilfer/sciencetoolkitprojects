@@ -27,24 +27,22 @@ angular.module('nspServices').factory('SyncService', ['$http', function($http) {
       this.updater.stop();
     };
 
-    service._update = function(data, periodic) {
+    service._update = function(data, periodic, onchange) {
       this.updater.stop();
       this.updater.setRequestData(data);
-      this.updater.updateNow(periodic);
+      this.updater.updateNow(periodic, onchange);
     };
 
-    service.getProject = function(projectId, periodic) {
-      this._update({action: 'get', id: projectId}, periodic);
+    service.getProject = function(projectId, periodic, onchange) {
+      this._update({action: 'get', id: projectId}, periodic, onchange);
     };
 
-    service.getList = function(filter, periodic) {
-      this._update({action: 'list', filter: filter}, periodic);
+    service.getList = function(filter, periodic, onchange) {
+      this._update({action: 'list', filter: filter}, periodic, onchange);
     };
 
     service.somethingChanged = function() {
-      if (this.updater.working) {
-        this.updater.updateNow();
-      }
+      this.updater.somethingChanged();
     };
 
 

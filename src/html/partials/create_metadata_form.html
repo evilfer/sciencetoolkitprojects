@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<form class="pure-form pure-form-stacked">
+    <fieldset>
+        <label for="title">Title</label>
+        <input id="title" type="text" placeholder="title" ng-model="project.title" >
+
+        <label for="description">Password</label>
+        <textarea id="description" placeholder="description" ng-model="project.description" ></textarea>
+
+        <button class="pure-button pure-button-primary" ng-disabled="metadataEdition.okButtonDisabled()" ng-click="metadataEdition.save()">{{isNew ? "Create" : "Save"}}</button>
+        <button class="pure-button pure-button-primary" ng-click="metadataEdition.cancel()">Cancel</button>
+    </fieldset>
+</form>

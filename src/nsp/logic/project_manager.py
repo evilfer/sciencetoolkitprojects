@@ -23,47 +23,102 @@ def view_project(user, data):
 
 
 def create_project(user, data):
-    project = Project(ownerid=user.user_id(), user_count=1)
-    _data2project(data, project)
-    project.put()
-
-    add_subscription(user, project, False)
-
-    return True, project.key.id()
+    if 'metadata' in data:
+        project = Project(ownerid=user.user_id(), user_count=1, is_public=False, profiles=[])
+        _metadata2project(data['metadata'], project)
+        project.put()
+        add_subscription(user, project, False)
+        return True, project.key.id()
+    else:
+        return False, 0
 
 
 def update_project(user, data):
     project = _get_project(_read_int(data, 'id', 0))
 
-    if access.can_edit_project(user, project):
-        _data2project(data, project)
+    if access.can_edit_project(user, project) and 'metadata' in data:
+        _metadata2project(data['metadata'], project)
         update_project_user_count(project, False)
         project.put()
         return True
     else:
         return False
 
-def _data2project(data, project):
-    project.title = data['title']
-    project.description = data.get('description', '')
-    project.is_public = data.get('is_public', False)
+def change_visibility(user, data):
+    project = _get_project(_read_int(data, 'id', 0))
+    if access.can_edit_project(user, project) and 'is_public' in data:
+        project.is_public = _read_bool(data, 'is_public', False)
+        update_project_user_count(project, False)
+        project.put()
+        return True, project.is_public
+    else:
+        return False, False
 
-    profiles = []
+def update_profiles(user, data):
+    project = _get_project(_read_int(data, 'id', 0))
+    if access.can_edit_project(user, project) and 'profile' in data:
+        profile_data = data['profile']
+        profileId = _read_int(profile_data, 'id', -1)
 
-    for profile_data in data.get('profiles', []):
-        inputs = []
-        for input_data in profile_data.get('inputs', []):
-            input_id = input_data.get('id', 0)
-            title = input_data.get('sensor', '')
-            rate = _read_float(input_data, 'rate')
-            inputs.append(SensorInput(id=input_id, sensor=title, rate=rate))
+        profile_to_update = None
 
-        title = profile_data.get('title', '')
-        profile_id = profile_data.get('id', 0)
-        profiles.append(DataLoggingProfile(id=profile_id, title=title, inputs=inputs))
+        if profileId < 0:
+            return False
+
+        for profile in project.profiles:
+            if profile.id == profileId:
+                if profile.is_active:
+                    return False
+                else :
+                    profile_to_update = profile
+                    break
+
+        if not profile_to_update:
+            profile_to_update = DataLoggingProfile(id = profileId, is_active = False, series_count = 0)
+            project.profiles.append(profile_to_update)
 
 
-    project.profiles = profiles
+        if profile_to_update:
+            print profile_data
+            _data2profile(profile_data, profile_to_update)
+            print profile_to_update
+            print project
+            project.put()
+            return True
+        else:
+            return False
+
+    else:
+        return False
+
+def change_profile_visibility(user, data):
+    project = _get_project(_read_int(data, 'id', 0))
+    if access.can_edit_project(user, project) and 'profile_id' in data:
+        profileId = _read_int(data, 'profile_id', -1)
+        active = _read_bool(data, 'is_active', False)
+
+        for profile in project.profiles:
+            if profile.id == profileId:
+                profile.is_active = active
+                project.put()
+                return True
+
+    return False
+
+def _data2profile(profile_data, profile):
+    profile.title = profile_data.get('title', '')
+    profile.inputs = []
+    for input_data in profile_data.get('inputs', []):
+        input_id = _read_int(input_data, 'id', 0)
+        sensor = input_data.get('sensor', '')
+        rate = _read_float(input_data, 'rate')
+        profile.inputs.append(SensorInput(id=input_id, sensor=sensor, rate=rate))
+
+
+def _metadata2project(metadata, project):
+    project.title = metadata.get('title', '')
+    project.description = metadata.get('description', '')
+
 
 def _read_float(data, key, default_value=.0):
     try:
@@ -76,6 +131,13 @@ def _read_int(data, key, default_value=0):
         return int(data.get(key, default_value))
     except ValueError:
         return default_value
+
+def _read_bool(data, key, default_value=False):
+    try:
+        return bool(data.get(key, default_value))
+    except ValueError:
+        return default_value
+
 
 def list_projects(user, only_owned=False):
     query = access.filter_project_list_query(user, only_owned)

@@ -40,7 +40,7 @@ myApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $
             })
             .state('create.new', {
               url: '/new',
-              templateUrl: 'partials/create_edit.html',
+              templateUrl: 'partials/create_new.html',
               controller: 'CreateEditCtrl'
             })
             .state('create.edit', {

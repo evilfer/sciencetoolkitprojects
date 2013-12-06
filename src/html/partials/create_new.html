@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<div ng-if="!ready">
+    loading...
+</div>
+
+<div ng-if="ready">
+    <div ng-if="bad">error</div>
+    <div ng-if="!bad">
+        <h2>Project description</h2>
+        <div ng-include="'partials/create_metadata_form.html'"></div>
+    </div>
+</div>

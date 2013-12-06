@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<form class="pure-form pure-form-stacked">
+    <fieldset>
+
+        <label>Profile title</label>
+        <input type="text" placeholder="title" ng-model="profileActions.openProfile.title" >
+        <ul style="list-style-type: none">
+            <li ng-repeat="input in profileActions.openProfile.inputs">
+                <label>Sensor</label>
+                <input type="text" placeholder="title" ng-model="input.sensor" >
+                <label>Sampling rate</label>
+                <input type="text" placeholder="number" step="any" ng-model="input.rate" >
+                <button class="pure-button pure-button-xsmall" ng-click="profileActions.deleteProfileInput(input.id)">Delete</button>
+            </li>
+        </ul>
+        <div>
+            <button class="pure-button pure-button-xsmall" ng-click="profileActions.addProfileInput()">Add sensor</button>
+        </div>
+
+        <div>
+            <button class="pure-button pure-button-primary" ng-disabled="profileActions.okButtonDisabled()" ng-click="profileActions.save()">{{profileActions.isNewProfile() ? "Add" : "Save"}}</button>
+            <button class="pure-button pure-button-primary" ng-click="profileActions.cancel()">Cancel</button>
+        </div>
+    </fieldset>
+</form>
