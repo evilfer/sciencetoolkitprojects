@@ -11,6 +11,9 @@
         <ul>
             <li ng-repeat="input in profile.inputs">
                 {{input.sensor}}: {{input.rate}} samples/s.
+                <button class="pure-button pure-button-active" data-ui-sref="upload-data({projectId:project.id, profileId:profile.id})">
+                    Upload data
+                </button>
             </li>
         </ul>
     </li>

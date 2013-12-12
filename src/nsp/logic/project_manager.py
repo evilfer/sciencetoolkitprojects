@@ -5,6 +5,7 @@ from nsp.model.project import Project
 from nsp.model.subscription import Subscription
 from nsp.model.profile import DataLoggingProfile
 from nsp.model.profile import SensorInput
+from nsp.model.profile import Transformation
 
 from nsp.logic import access
 
@@ -112,7 +113,19 @@ def _data2profile(profile_data, profile):
         input_id = _read_int(input_data, 'id', 0)
         sensor = input_data.get('sensor', '')
         rate = _read_float(input_data, 'rate')
-        profile.inputs.append(SensorInput(id=input_id, sensor=sensor, rate=rate))
+        sensor_input = SensorInput(id=input_id, sensor=sensor, rate=rate, transformations=[])
+        for transformation_data in input_data.get('transformations', []):
+            t_id = _read_int(transformation_data, 'id', 0);
+            source_id = _read_int(transformation_data, 'sourceid', 0);
+            t_code = transformation_data.get('transformation', '')
+            is_displayed = _read_bool(transformation_data, 'is_displayed')
+            display_name = transformation_data.get('display_name', '')
+            transformation = Transformation(id=t_id, source_id=source_id, transformation=t_code, is_displayed=is_displayed, display_name=display_name)
+
+            sensor_input.transformations.append(transformation)
+
+        profile.inputs.append(sensor_input)
+
 
 
 def _metadata2project(metadata, project):

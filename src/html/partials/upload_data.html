@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<div ng-if="ready && !bad">
+    Upload data to
+    <ul> 
+        <li>project: {{project.title}}</li>
+        <li>profile: {{profile.title}}</li>
+    </ul>
+
+    <input ng-file-select type="file" multiple  />
+
+    <p>Queue length: {{ uploader.queue.length}}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th width="50%">Name</th>
+                <th ng-show="uploader.hasHTML5">Size</th>
+                <th ng-show="uploader.hasHTML5">Progress</th>
+                <th>Success</th>
+                <th>Error</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in uploader.queue">
+                <td><strong>{{ item.file.name}}</strong></td>
+                <td ng-show="uploader.hasHTML5" nowrap>{{ item.file.size / 1024 / 1024|number:2 }} MB</td>
+                <td ng-show="uploader.hasHTML5" nowrap>{{item.progress}} %</td>
+                <td>
+                    <div ng-show="item.isSuccess">Uploaded</div>
+                </td>
+                <td>
+                    <div ng-show="item.isError">Error</div>
+                </td>
+                <td nowrap>
+                    <button class="pure-button" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                        Upload
+                    </button>
+                    <button class="pure-button" ng-click="item.remove()">
+                        {{item.isSuccess ? "Clear" : "Cancel"}}
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div>
+        <p ng-if="uploader.progress !== null">
+            Queue progress: {{uploader.progress}} %
+        </p>
+        <button class="pure-button" ng-click="uploader.uploadAll()" ng-disabled="!uploader.getNotUploadedItems().length">
+            Upload all
+        </button>
+        <button class="pure-button" ng-click="actions.clearUploaded()" ng-disabled="!actions.hasUploaded()">
+            Clear uploaded
+        </button>
+    </div>
+
+</div>
+

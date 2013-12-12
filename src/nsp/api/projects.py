@@ -96,8 +96,19 @@ class ProjectsApi(webapp2.RequestHandler):
                     result_input = {
                                     'id': profile_input.id,
                                     'sensor': profile_input.sensor,
-                                    'rate': profile_input.rate
+                                    'rate': profile_input.rate,
+                                    'transformations': []
                                     }
+                    for transformation in profile_input.transformations:
+                        result_transformation = {
+                                                 'id': transformation.id,
+                                                 'sourceid': transformation.sourceid,
+                                                 'transformation': transformation.transformation,
+                                                 'is_displayed': transformation.is_displayed,
+                                                 'display_name': transformation.display_name
+                                                 }
+                        result_input['transformations'].append(result_transformation)
+
                     result_profile['inputs'].append(result_input)
 
                 result_project['profiles'].append(result_profile)

@@ -8,7 +8,8 @@ angular.module('nspServices').factory('ModifyProjectService', ['$http', 'UpdateN
     service._post = function(data) {
       this.working = true;
       var self = this;
-
+      
+      console.log(data);
       return $http.post('/api/projects', data).then(function(result) {
         console.log(result.data);
         self.working = false;

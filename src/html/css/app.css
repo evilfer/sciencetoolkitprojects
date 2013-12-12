@@ -65,3 +65,7 @@ h2 {
     border-bottom: 1px solid lightgrey;
     margin-bottom: 10px;
 }
+
+.input-container {
+    padding: 20px;
+}

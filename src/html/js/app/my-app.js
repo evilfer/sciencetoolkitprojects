@@ -1,6 +1,6 @@
 /*global console, angular*/
 
-var myApp = angular.module('myApp', ['nspServices', /* 'directive.g+signin',*/ 'ui.router']);
+var myApp = angular.module('myApp', ['nspServices', /* 'directive.g+signin',*/ 'ui.router', 'angularFileUpload']);
 
 
 myApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
@@ -27,6 +27,11 @@ myApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $
               url: '/explore/{projectId}',
               templateUrl: 'partials/view_project.html',
               controller: 'ProjectViewCtrl'
+            })
+            .state('upload-data', {
+              url: '/explore/{projectId}/upload/{profileId}',
+              templateUrl: 'partials/upload_data.html',
+              controller: 'UploadDataCtrl'
             })
             .state('create', {
               url: '/create',

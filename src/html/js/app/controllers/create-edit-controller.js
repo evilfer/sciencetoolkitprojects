@@ -30,15 +30,17 @@ myApp.controller('CreateEditCtrl', function($scope, $state, $stateParams, Projec
   $scope.watchers.watch($scope, 'modifyProjectSrv.working', function() {
     $scope.awaitingDataAnswer = $scope.modifyProjectSrv.working;
   });
+  
   $scope.actions = {
     cancel: function() {
       $state.go('create.list');
     }
   };
+  
   $scope.okButtonDisabled = function() {
     return !$scope.ready || $scope.awaitingDataAnswer || !$scope.project || !Boolean($scope.project.title) || (!$scope.request.isNew && angular.equals($scope.project, $scope.original));
   };
-
+  
   $scope.metadataEdition = {
     isOpen: false,
     open: function() {
@@ -89,89 +91,6 @@ myApp.controller('CreateEditCtrl', function($scope, $state, $stateParams, Projec
           }
         });
       }
-    }
-  };
-  $scope.profileActions = {
-    isOpen: false,
-    openId: null,
-    openProfile: null,
-    open: function(profileId) {
-      if (profileId === null || typeof profileId === 'undefined') {
-        this.openId = null;
-        this.openProfile = {id: this._getNextProfileId(), inputs: []};
-      } else {
-        this.openId = profileId;
-        this.openProfile = nspClone(this._getProfile(profileId));
-      }
-      this.isOpen = true;
-    },
-    cancel: function() {
-      this.close();
-    },
-    save: function() {
-      $scope.modifyProjectSrv.submitProfile($scope.project.id, this.openProfile);
-      this.close();
-    },
-    makeActive: function(profileId, active) {
-      $scope.modifyProjectSrv.setProfileIsActive($scope.project.id, profileId, active);
-    },
-    close: function() {
-      this.isOpen = false;
-      this.openProfile = null;
-    },
-    isNewProfile: function() {
-      return this.openId === null;
-    },
-    isEditingNew: function() {
-      return this.isOpen && this.isNewProfile();
-    },
-    isEditingProfile: function(profileId) {
-      return this.isOpen && this.openId === profileId;
-    },
-    /*deleteProfile: function(profileId) {
-     this._deleteChild($scope.project.profiles, profileId);
-     },*/
-    addProfileInput: function() {
-      this._createChild(this.openProfile, 'inputs');
-    },
-    deleteProfileInput: function(sensorId) {
-      this._deleteChild(this.openProfile.inputs, sensorId);
-    },
-    _createChild: function(containerParent, containerName) {
-      if (typeof containerParent[containerName] !== 'object') {
-        containerParent[containerName] = [];
-      }
-      var id = this._getNextId(containerParent, containerName);
-
-      containerParent[containerName].push({id: id});
-    },
-    _getNextId: function(containerParent, containerName) {
-      var id = 0;
-      for (var i = 0; i < containerParent[containerName].length; i++) {
-        id = Math.max(containerParent[containerName][i].id, i + 1);
-      }
-      return id;
-    },
-    _getNextProfileId: function() {
-      return this._getNextId($scope.project, 'profiles');
-    },
-    _deleteChild: function(container, id) {
-      var index = this._getIndex(container, id);
-      if (index !== false) {
-        container.splice(index, 1);
-      }
-    },
-    _getIndex: function(container, id) {
-      for (var i = container.length - 1; i >= 0; i--) {
-        if (container[i].id === id) {
-          return i;
-        }
-      }
-      return false;
-    },
-    _getProfile: function(id) {
-      var index = this._getIndex($scope.project.profiles, id);
-      return index !== false ? $scope.project.profiles[index] : null;
     }
   };
 });
