@@ -34,10 +34,10 @@
                     <div ng-show="item.isError">Error</div>
                 </td>
                 <td nowrap>
-                    <button class="pure-button" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                    <button class="pure-button pure-button-primary" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
                         Upload
                     </button>
-                    <button class="pure-button" ng-click="item.remove()">
+                    <button class="pure-button pure-button-primary" ng-click="item.remove()">
                         {{item.isSuccess ? "Clear" : "Cancel"}}
                     </button>
                 </td>
@@ -49,13 +49,17 @@
         <p ng-if="uploader.progress !== null">
             Queue progress: {{uploader.progress}} %
         </p>
-        <button class="pure-button" ng-click="uploader.uploadAll()" ng-disabled="!uploader.getNotUploadedItems().length">
+        <button class="pure-button pure-button-primary" ng-click="uploader.uploadAll()" ng-disabled="!uploader.getNotUploadedItems().length">
             Upload all
         </button>
-        <button class="pure-button" ng-click="actions.clearUploaded()" ng-disabled="!actions.hasUploaded()">
+        <button class="pure-button pure-button-primary" ng-click="actions.clearUploaded()" ng-disabled="!actions.hasUploaded()">
             Clear uploaded
         </button>
     </div>
+
+    <p>
+        <button class="pure-button pure-button-primary" data-ui-sref="explore-project({projectId: project.id})">Go back</button>
+    </p>
 
 </div>
 

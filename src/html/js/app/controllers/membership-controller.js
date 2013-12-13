@@ -3,7 +3,7 @@
 
 var myApp = angular.module('myApp');
 
-myApp.controller('MembershipCtrl', function($scope, $state, LoginService, ModifyProjectService) {
+myApp.controller('MembershipCtrl', function($scope, $state, LoginService, SubscriptionService) {
   $scope.watchers = new nspWatchers();
 
   $scope.loginSrv = LoginService;
@@ -13,19 +13,21 @@ myApp.controller('MembershipCtrl', function($scope, $state, LoginService, Modify
   updateLogin();
   $scope.watchers.watch($scope, 'loginSrv.ready', updateLogin);
 
-  $scope.modifyProjectSrv = ModifyProjectService;
+  $scope.subscriptionSrv = SubscriptionService;
 
-
+  
+  var membershipCallback = function(result) {
+    if (result.ok) {
+      $scope.project.im_member = result.im_member;
+    }
+  };
 
   $scope.joinActions = {
     join: function(projectId) {
-      $scope.modifyProjectSrv.joinProject(projectId);
+      $scope.subscriptionSrv.joinProject(projectId).then(membershipCallback);
     },
     leave: function(projectId) {
-      $scope.modifyProjectSrv.leaveProject(projectId);
-    },
-    edit: function(projectId) {
-      $state.go('create.edit', {projectId: projectId});
+      $scope.subscriptionSrv.leaveProject(projectId).then(membershipCallback);
     }
   };
 

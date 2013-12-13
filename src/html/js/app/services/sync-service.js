@@ -33,8 +33,8 @@ angular.module('nspServices').factory('SyncService', ['$http', function($http) {
       this.updater.updateNow(periodic, onchange);
     };
 
-    service.getProject = function(projectId, periodic, onchange) {
-      this._update({action: 'get', id: projectId}, periodic, onchange);
+    service.getProject = function(projectId, getData, periodic, onchange) {
+      this._update({action: 'get', id: projectId, getdata: getData}, periodic, onchange);
     };
 
     service.getList = function(filter, periodic, onchange) {

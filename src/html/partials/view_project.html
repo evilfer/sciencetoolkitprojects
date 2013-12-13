@@ -1,20 +1,51 @@
 <!DOCTYPE html>
 
+<h2>{{project.title}}</h2>
 
-{{project.title}}
+<p>{{project.description}}</p>
+
 <div ng-include="'partials/project_membership.html'"></div>
-{{project.description}}
 
-<ul>
-    <li ng-repeat="profile in project.profiles">
-        {{profile.title}}
-        <ul>
-            <li ng-repeat="input in profile.inputs">
-                {{input.sensor}}: {{input.rate}} samples/s.
-                <button class="pure-button pure-button-active" data-ui-sref="upload-data({projectId:project.id, profileId:profile.id})">
-                    Upload data
+<h2>Data logging profiles</h2>
+
+<div ng-repeat="profile in project.profiles">
+    <h3>{{profile.title}}</h3>
+    <p>Sensors used: <span ng-repeat="input in profile.inputs"><b>{{input.sensor}}</b> ({{input.rate}} samples/s)<span ng-if="$last">.</span><span ng-if="!$last">, </span></span></p>
+
+    <div ng-if="project.im_member">
+        <div ng-if="profile.installed">
+            <p>
+                <button class="pure-button pure-button-primary" ng-click="profileActions.removeProfile(profile.id)">
+                    Remove profile from app
                 </button>
-            </li>
-        </ul>
-    </li>
-</ul>
+                You have added this profile to your app nQuire Sensor Toolkit.
+            </p>
+        </div>
+        <div ng-if="!profile.installed">
+            <p>
+                <button class="pure-button pure-button-primary" ng-click="profileActions.addProfile(profile.id)">
+                    Add profile to app
+                </button>
+                If you want to collect data for this project directly using the nQuire Sensor Toolkit app, you can add this profile to the app.
+            </p>
+        </div>
+        <button class="pure-button pure-button-primary" data-ui-sref="upload-data({projectId:project.id, profileId:profile.id})">
+            Upload data
+        </button>
+    </div>
+
+
+    <h4>Data series</h4>
+    <ul>
+        <li ng-repeat="series in project.series[profile.id]">
+            {{$index + 1}}: {{seriesData.count(series)}} samples.
+        </li>
+    </ul>
+
+    <h4>Charts</h4>
+    <div ng-repeat="chart in charts">
+        <h5>{{chart.title}}</h5>
+        <div data-nq-flot-chart data-chart="chart" data-data="project.series[profile.id]"/>
+    </div>
+</div>
+

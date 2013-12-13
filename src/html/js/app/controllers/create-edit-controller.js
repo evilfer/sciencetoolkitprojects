@@ -14,7 +14,7 @@ myApp.controller('CreateEditCtrl', function($scope, $state, $stateParams, Projec
       $scope.bad = false;
       $scope.ready = true;
     });
-    $scope.syncService.getProject($scope.request.projectId, false, true);
+    $scope.syncService.getProject($scope.request.projectId, false, false, true);
   } else {
     $scope.project = {};
     $scope.bad = false;

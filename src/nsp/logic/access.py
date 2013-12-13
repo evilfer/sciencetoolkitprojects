@@ -1,6 +1,8 @@
 from google.appengine.ext import ndb
 from nsp.model.project import Project
 
+import common
+
 def filter_project_list_query(user, only_owned):
     if user:
         if only_owned:
@@ -21,3 +23,10 @@ def can_edit_project(user, project):
 
 def can_join_project(user, project):
     return user and project and (project.is_public or project.ownerid == user.user_id())
+
+def can_add_data(user, project):
+    return common.is_member(user, project)
+
+def can_view_data(user, project):
+    return common.is_member(user, project)
+

@@ -57,20 +57,6 @@ angular.module('nspServices').factory('ModifyProjectService', ['$http', 'UpdateN
       return this._post(data);
     };
 
-    service._memberAction = function(id, action) {
-      var data = {
-        'action': action,
-        'id': id
-      };
-      return this._post(data);
-    };
-
-    service.joinProject = function(id) {
-      this._memberAction(id, 'join');
-    };
-    service.leaveProject = function(id) {
-      this._memberAction(id, 'leave');
-    };
 
     return service;
   }]);

@@ -1,10 +1,9 @@
 import webapp2
 import json
-import simplejson
 
 from google.appengine.api import users
 
-from nsp.logic import project_manager
+from nsp.logic import project_manager, data_manager, common
 
 class ProjectsApi(webapp2.RequestHandler):
 
@@ -13,7 +12,7 @@ class ProjectsApi(webapp2.RequestHandler):
         self.process_request("get", data)
 
     def post(self):
-        data = simplejson.loads(self.request.body)
+        data = json.loads(self.request.body)
         self.process_request("post", data)
 
 
@@ -28,7 +27,7 @@ class ProjectsApi(webapp2.RequestHandler):
         if action == "get":
             project = project_manager.view_project(user, data)
             if project:
-                result = {'ok': True, 'project': self.project2dict(user, project, True)}
+                result = {'ok': True, 'project': self.project2dict(user, project, True, data.get('getdata', False))}
             else:
                 result = {'ok': False}
 
@@ -72,14 +71,17 @@ class ProjectsApi(webapp2.RequestHandler):
         json.dump(result, self.response)
 
 
-    def project2dict(self, user, project, detailed=False):
+    def project2dict(self, user, project, detailed=False, loaddata=False):
+        subscription = common.get_subscription(user, project)
+        im_member = bool(subscription)
+
         result_project = {
                           'id': project.key.id(),
                           'title': project.title,
                           'description': project.description,
                           'is_public': project.is_public,
                           'user_count': project.user_count,
-                          'im_member': bool(project_manager.get_subscription(user, project)),
+                          'im_member': im_member,
                           'im_owner': user and user.user_id() == project.ownerid
                           }
 
@@ -90,6 +92,7 @@ class ProjectsApi(webapp2.RequestHandler):
                                   'id': profile.id,
                                   'is_active': profile.is_active,
                                   'title': profile.title,
+                                  'installed': im_member and profile.id in subscription.profiles,
                                   'inputs': []
                                   }
                 for profile_input in profile.inputs:
@@ -112,6 +115,18 @@ class ProjectsApi(webapp2.RequestHandler):
                     result_profile['inputs'].append(result_input)
 
                 result_project['profiles'].append(result_profile)
+
+            if loaddata:
+                result_series = {}
+                series_list = data_manager.list_project_data(user, project)
+                if series_list:
+                    for series in series_list:
+                        if not series.profileid in result_series:
+                            result_series[series.profileid] = []
+                        vectors = json.loads(series.data)
+                        result_series[series.profileid].append({'userid': series.userid, 'data': vectors})
+
+                result_project['series'] = result_series
 
         return result_project
 

@@ -29,12 +29,9 @@ nspUpdater.prototype.updateNow = function(periodic, onchange) {
   var _periodic = Boolean(periodic);
   var _onchange = typeof onchange === 'undefined' ? _periodic : Boolean(onchange);
   
-  console.log(this);
-
   this.periodicUpdates = this.periodicUpdates || _periodic;
   this.onChangeUpdates = _onchange;
   this.updatePeriod = this.defaultPeriod;
-  console.log(this);
   this._runUpdate();
 };
 

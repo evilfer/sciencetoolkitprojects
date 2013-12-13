@@ -9,6 +9,7 @@ class Subscription(ndb.Model):
     userid = ndb.StringProperty()
     projectid = ndb.IntegerProperty()
     is_public = ndb.BooleanProperty()
+    profiles = ndb.IntegerProperty(repeated=True)
 
 
 

@@ -3,9 +3,7 @@
 <div ng-controller="MembershipCtrl">
     <div ng-if="loginStatus.login">
         <div ng-if="project.im_owner">
-            <button class="pure-button pure-button-xsmall" ng-click="joinActions.edit(project.id)">
-                Edit
-            </button>
+            <p>Created by me.</p>
         </div>
         <div ng-if="!project.im_owner">
             <div ng-if="project.im_member">
