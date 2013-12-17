@@ -31,8 +31,8 @@ def load_project_id(projectid):
     return project
 
 def load_project(data, key):
-    projectid = read_int(data, key)
-    return load_project_id(projectid)
+    projectid = read_int(data, key, -1)
+    return load_project_id(projectid) if projectid >=0 else None
 
 def get_profile(project, profileid):
     for profile in project.profiles:

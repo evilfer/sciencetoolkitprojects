@@ -2,6 +2,10 @@
 
 
 angular.module('nspServices').factory('SyncService', ['$http', function($http) {
+    
+    $http.get('/api/subscriptions?action=myprofiles').then(function(result) {
+      console.log(result.data);
+    });
 
     var service = {
       status: false,

@@ -3,11 +3,11 @@
 angular.module('nspServices').factory('SensorsService', [function() {
     var service = {
       sensorTypes: {
-        'accelerometer': {
+        'acc': {
           name: 'Accelerometer',
           output: '[(txyz)]'
         },
-        'sound': {
+        'snd': {
           name: 'Sound',
           output: '[(tx)]'
         }

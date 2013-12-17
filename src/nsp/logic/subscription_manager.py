@@ -41,3 +41,7 @@ def remove_profile(user, project, profileid):
         return True, False
     else:
         return False, False
+
+def user_subscriptions(user):
+    return Subscription.query(Subscription.userid == user.user_id()).fetch()
+

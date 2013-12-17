@@ -34,6 +34,7 @@ myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdServ
   });
   
   var changeProfileCallback = function(result) {
+    console.log(result);
     if (result.ok) {
       $scope.project.profiles[result.profileid].installed = result.installed;
     }

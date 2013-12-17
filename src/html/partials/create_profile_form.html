@@ -6,8 +6,8 @@
         <div class="input-container" ng-repeat="input in profileActions.openProfile.inputs">
             <select ng-model="input.sensor">
                 <option value="">Select sensor</option>
-                <option value="accelerometer">Accelerometer</option>
-                <option value="sound">Sound</option>
+                <option value="acc">Accelerometer</option>
+                <option value="snd">Sound</option>
             </select>
             <input type="text" placeholder="number" step="any" ng-model="input.rate" >
             <label>samples/s</label>
