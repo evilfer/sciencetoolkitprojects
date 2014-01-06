@@ -1,9 +1,15 @@
 
 from nsp.model.project import Project
 from nsp.model.subscription import Subscription
+import logging
 
 from google.appengine.ext import ndb
 
+def str_to_int(str_value, default_value = 0):
+    try:
+        return int(str_value)
+    except ValueError:
+        return default_value
 
 def read_float(data, key, default_value=.0):
     try:
@@ -12,10 +18,7 @@ def read_float(data, key, default_value=.0):
         return default_value
 
 def read_int(data, key, default_value=0):
-    try:
-        return int(data.get(key, default_value))
-    except ValueError:
-        return default_value
+    return str_to_int(data.get(key, default_value), default_value)
 
 def read_bool(data, key, default_value=False):
     try:
@@ -32,12 +35,20 @@ def load_project_id(projectid):
 
 def load_project(data, key):
     projectid = read_int(data, key, -1)
+    logging.info(projectid)
     return load_project_id(projectid) if projectid >=0 else None
 
 def get_profile(project, profileid):
     for profile in project.profiles:
         if profile.id == profileid:
             return profile
+
+    return None
+
+def get_sensorinput(profile, sensorinputid):
+    for sensor_input in profile.inputs:
+        if sensor_input.id == sensorinputid:
+            return sensor_input
 
     return None
 

@@ -3,7 +3,7 @@ import json
 
 from google.appengine.api import users
 
-from nsp.logic import common, subscription_manager, project_manager
+from nsp.logic import common, subscription_manager
 
 class SubscriptionsApi(webapp2.RequestHandler):
 
@@ -40,8 +40,6 @@ class SubscriptionsApi(webapp2.RequestHandler):
                             profile = common.get_profile(project, profileid)
                             if profile:
                                 result['projects'][subscription.projectid][profileid] = self.profile_to_dict(profile)
-
-                        subscription.profiles
             else:
                 result = {'ok': False}
 

@@ -3,7 +3,7 @@ import json
 
 from google.appengine.api import users
 
-from nsp.logic import project_manager, data_manager, common
+from nsp.logic import project_manager, data_manager, subscription_manager, common
 
 class ProjectsApi(webapp2.RequestHandler):
 
@@ -61,9 +61,9 @@ class ProjectsApi(webapp2.RequestHandler):
             if not project:
                 ok = False
             elif action == "join":
-                ok = project_manager.add_subscription(user, project)
+                ok = subscription_manager.add_subscription(user, project)
             else:
-                project_manager.remove_subscription(user, project)
+                subscription_manager.remove_subscription(user, project)
                 ok = True
 
             result = {'ok': ok}

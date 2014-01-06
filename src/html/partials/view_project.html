@@ -10,7 +10,7 @@
 
 <div ng-repeat="profile in project.profiles">
     <h3>{{profile.title}}</h3>
-    <p>Sensors used: <span ng-repeat="input in profile.inputs"><b>{{input.sensor}}</b> ({{input.rate}} samples/s)<span ng-if="$last">.</span><span ng-if="!$last">, </span></span></p>
+    <p>Sensors used: <span ng-repeat="input in profile.inputs"><b>{{sensorName(input.sensor)}}</b> ({{input.rate}} samples/s)<span ng-if="$last">.</span><span ng-if="!$last">, </span></span></p>
 
     <div ng-if="project.im_member">
         <div ng-if="profile.installed">

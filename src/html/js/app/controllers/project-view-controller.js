@@ -8,9 +8,9 @@ myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdServ
   $scope.watchers = new nspWatchers();
 
   $scope.syncService = SyncService;
-  
+
   $scope.subscriptionSrv = SubscriptionService;
-  
+
   if ($scope.request.projectId) {
     $scope.project = null;
     $scope.ready = false;
@@ -27,19 +27,19 @@ myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdServ
     $scope.bad = true;
     $scope.ready = true;
   }
-  
+
   $scope.$on('$destroy', function() {
     $scope.syncService.stop();
     $scope.watchers.unwatch();
   });
-  
+
   var changeProfileCallback = function(result) {
     console.log(result);
     if (result.ok) {
       $scope.project.profiles[result.profileid].installed = result.installed;
     }
   };
-  
+
   $scope.profileActions = {
     addProfile: function(profileId) {
       $scope.subscriptionSrv.addProfile($scope.project.id, profileId).then(changeProfileCallback);
@@ -48,7 +48,7 @@ myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdServ
       $scope.subscriptionSrv.removeProfile($scope.project.id, profileId).then(changeProfileCallback);
     }
   };
-  
+
   $scope.seriesData = {
     count: function(series) {
       var count = 0;
@@ -58,7 +58,16 @@ myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdServ
       return count;
     }
   };
-  
+
+  $scope.sensorName = function(sensorType) {
+    switch (sensorType) {
+      case 'acc':
+        return 'Accelerometer';
+      default:
+        return 'unknown';
+    }
+  };
+
   $scope.charts = [
     {
       title: '1',

@@ -34,7 +34,7 @@
                     <div ng-show="item.isError">Error</div>
                 </td>
                 <td nowrap>
-                    <button class="pure-button pure-button-primary" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                    <button class="pure-button pure-button-primary" ng-click="item.upload()" ng-disabled="false && (item.isReady || item.isUploading || item.isSuccess)">
                         Upload
                     </button>
                     <button class="pure-button pure-button-primary" ng-click="item.remove()">

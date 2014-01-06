@@ -10,6 +10,7 @@ class Series(ndb.Model):
     userid = ndb.StringProperty()
 
     data = ndb.TextProperty()
+    metadata = ndb.TextProperty()
 
 
 
