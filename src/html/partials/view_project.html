@@ -10,8 +10,6 @@
 
 <div ng-repeat="profile in project.profiles">
     <h3>{{profile.title}}</h3>
-    <p>Sensors used: <span ng-repeat="input in profile.inputs"><b>{{sensorName(input.sensor)}}</b> ({{input.rate}} samples/s)<span ng-if="$last">.</span><span ng-if="!$last">, </span></span></p>
-
     <div ng-if="project.im_member">
         <div ng-if="profile.installed">
             <p>
@@ -29,23 +27,41 @@
                 If you want to collect data for this project directly using the nQuire Sensor Toolkit app, you can add this profile to the app.
             </p>
         </div>
-        <button class="pure-button pure-button-primary" data-ui-sref="upload-data({projectId:project.id, profileId:profile.id})">
+        <!--<button class="pure-button pure-button-primary" data-ui-sref="upload-data({projectId:project.id, profileId:profile.id})">
             Upload data
-        </button>
+        </button>-->
     </div>
 
+    <p>Sensors: <span ng-repeat="input in profile.inputs"><b>{{sensorName(input.sensor)}}</b> ({{input.rate}} samples/s)<span ng-if="$last">.</span><span ng-if="!$last">, </span></span></p>
 
-    <h4>Data series</h4>
-    <ul>
-        <li ng-repeat="series in project.series[profile.id]">
-            {{$index + 1}}: {{seriesData.count(series)}} samples.
-        </li>
-    </ul>
-
-    <h4>Charts</h4>
-    <div ng-repeat="chart in charts">
-        <h5>{{chart.title}}</h5>
-        <div data-nq-flot-chart data-chart="chart" data-data="project.series[profile.id]"/>
+    <div class="pure-menu pure-menu-open pure-menu-horizontal">
+        <ul>
+            <li ng-class="{'pure-menu-selected': view.tab === 'series'}"><a href="" ng-click="view.openTab('series')">Data series</a></li>
+            <li ng-class="{'pure-menu-selected': view.tab === 'plot'}"><a href="" ng-click="view.openTab('plot')">Plot</a></li>
+        </ul>
     </div>
+
+    <div ng-switch="view.tab">
+        <div ng-switch-when="series">
+            <table class="pure-table">
+                <thead>
+                    <tr>
+                        <th>#</th><th>Samples</th><th>Length (s)</th><th>Selected</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="series in project.series[profile.id]">
+                        <td>{{$index + 1}}</td><td>{{seriesData.count(series)}}</td><td>{{seriesData.length(series).toFixed(2)}}</td><td><input type="checkbox" /></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div ng-switch-default>
+            <div ng-repeat="chart in view.charts">
+                <div data-nq-flot-chart data-chart="chart" data-project="project" data-profile="profile.id"/>
+            </div>
+        </div>
+    </div>
+
 </div>
 

@@ -2,14 +2,14 @@
 
 var myApp = angular.module('myApp');
 
-myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdService, SyncService, SubscriptionService) {
+myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdService, SyncService, SubscriptionService, SensorsService) {
   $scope.request = ProjectIdService.check($stateParams);
 
   $scope.watchers = new nspWatchers();
 
   $scope.syncService = SyncService;
 
-  $scope.subscriptionSrv = SubscriptionService;
+
 
   if ($scope.request.projectId) {
     $scope.project = null;
@@ -40,6 +40,7 @@ myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdServ
     }
   };
 
+  $scope.subscriptionSrv = SubscriptionService;
   $scope.profileActions = {
     addProfile: function(profileId) {
       $scope.subscriptionSrv.addProfile($scope.project.id, profileId).then(changeProfileCallback);
@@ -49,6 +50,8 @@ myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdServ
     }
   };
 
+
+
   $scope.seriesData = {
     count: function(series) {
       var count = 0;
@@ -56,24 +59,33 @@ myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdServ
         count += series.data[key].length;
       }
       return count;
+    },
+    length: function(series) {
+      var length = 0;
+      for (var key in series.data) {
+        var d = series.data[key];
+        if (d.length > 1) {
+          length = Math.max(length, d[d.length-1][0] - d[0][0]);          
+        }
+      }
+      
+      return .001 * length;
     }
   };
 
   $scope.sensorName = function(sensorType) {
-    switch (sensorType) {
-      case 'acc':
-        return 'Accelerometer';
-      default:
-        return 'unknown';
-    }
+    return SensorsService.sensorTypes[sensorType].name;
   };
 
-  $scope.charts = [
-    {
-      title: '1',
-      series: 'all'
+  $scope.view = {
+    charts: [
+      {title: '1', series: 'all'}
+    ],
+    tab: 'series',
+    openTab: function(tab) {
+      this.tab = tab;
     }
-  ];
+  };
 
 });
 

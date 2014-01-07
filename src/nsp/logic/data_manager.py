@@ -11,6 +11,7 @@ import json
 
 data_size = {
              'acc': 3,
+             'lacc': 3,
              'snd': 1
              }
 
@@ -21,9 +22,6 @@ def list_project_data(user, project):
     else:
         return False
 
-def _set_error(result, error):
-    result['reason'] = error
-    result['ok'] = False
 
 
 def upload_data2(user, csv):
@@ -43,37 +41,37 @@ def upload_data2(user, csv):
             rid = line[11:]
             parts = rid.split('.')
             if len(parts) != 3:
-                _set_error('noid')
+                common.set_error(result, 'noid')
                 break
 
             request = {'id' : parts[1], 'profileid': parts[2]}
             project = common.load_project(request, 'id')
 
             if not project:
-                _set_error('noproject')
+                common.set_error(result, 'noproject')
                 break
 
             if not access.can_add_data(user, project):
-                _set_error('noaccess')
+                common.set_error(result, 'noaccess')
                 break
 
             profile = common.get_profile(project, common.read_int(request, 'profileid', -1))
 
             if not profile:
-                _set_error('noprofile')
+                common.set_error(result, 'noprofile')
                 break
 
             result['ok'] = True
 
         elif not profile:
-            _set_error('badline')
+            common.set_error(result, 'badline')
             break
 
         elif line[0:10] == '# sensor: ':
             parts = line[10:].split(' ', 2)
             logging.info(parts)
             if len(parts) != 3:
-                _set_error('nosensorid')
+                common.set_error(result, 'nosensorid')
                 break
             else:
                 input_id = common.str_to_int(parts[0], -1)
@@ -82,7 +80,7 @@ def upload_data2(user, csv):
 
                 sensor_input = common.get_sensorinput(profile, input_id)
                 if not sensor_input:
-                    _set_error('nosensor')
+                    common.set_error(result, 'nosensor')
                     break
 
                 series[input_id] = []
@@ -94,7 +92,7 @@ def upload_data2(user, csv):
             if len(parts) > 2:
                 input_id = common.str_to_int(parts[0])
                 if not input_id in series:
-                    _set_error('baddata')
+                    common.set_error(result, 'baddata')
                     break
 
                 length = 1 + data_size[sensorMap[input_id]]
@@ -113,49 +111,6 @@ def upload_data2(user, csv):
         metadata = {'sensors': sensorNames}
         seriesObj = Series(projectid=project.key.id(), profileid=profile.id, userid=user.user_id(), data=json.dumps(series), metadata=json.dumps(metadata))
         seriesObj.put();
-
-    logging.info(result)
-    logging.info(series)
-    logging.info(sensorNames)
-
-    return result
-
-
-
-def upload_data(user, request, csv):
-    result = {'ok' : False}
-
-    project = common.load_project(request, 'id')
-
-    if access.can_edit_project(user, project):
-
-        profile = common.get_profile(project, common.read_int(request, 'profileid', -1)) if project else None
-
-        if profile:
-            series = {}
-            for sensor_input in profile.inputs:
-                series[sensor_input.sensor] = []
-
-            for line in [s.strip() for s in csv.splitlines()]:
-                parts = [p.strip() for p in line.split(',')]
-                if len(parts) > 2:
-                    sensor = parts[1].split(':')[0]
-                    if sensor in series:
-                        length = 1 + data_size[sensor]
-
-                        if len(parts) >= 2 + length:
-                            try:
-                                row = []
-                                for i in range(length):
-                                    row.append(float(parts[2 + i]))
-                                series[sensor].append(row)
-                            except ValueError:
-                                logging.error("bad row: %s", line)
-
-            seriesObj = Series(projectid=project.key.id(), profileid=profile.id, userid=user.user_id(), data=json.dumps(series))
-            seriesObj.put();
-
-            result['ok'] = True
 
     return result
 

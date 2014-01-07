@@ -62,3 +62,8 @@ def get_subscription(user, project):
 def is_member(user, project):
     return bool(get_subscription(user, project))
 
+
+def set_error(result, error, ok_key='ok', error_key='reason'):
+    result[error_key] = error
+    result[ok_key] = False
+

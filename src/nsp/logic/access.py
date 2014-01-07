@@ -28,5 +28,5 @@ def can_add_data(user, project):
     return common.is_member(user, project)
 
 def can_view_data(user, project):
-    return common.is_member(user, project)
+    return project.is_public or common.is_member(user, project)
 

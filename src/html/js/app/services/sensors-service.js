@@ -5,11 +5,18 @@ angular.module('nspServices').factory('SensorsService', [function() {
       sensorTypes: {
         'acc': {
           name: 'Accelerometer',
-          output: '[(txyz)]'
+          output: '[(txyz)]',
+          labels: ['X (m/s)', 'Y (m/s)', 'Z (m/s)']
+        },
+        'lacc': {
+          name: 'Linear acceleration',
+          output: '[(txyz)]',
+          labels: ['X (m/s)', 'Y (m/s)', 'Z (m/s)']
         },
         'snd': {
           name: 'Sound',
-          output: '[(tx)]'
+          output: '[(tx)]',
+          labels: ['Snd (dB)']
         }
       },
       dataTypes: {

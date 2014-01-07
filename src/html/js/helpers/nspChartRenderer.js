@@ -1,54 +1,77 @@
 
-var nspChartRenderer = function($element, chart, list) {
+var nspChartRenderer = function($element, chart, dataList, inputs, SensorsService) {
   this.$element = $element;
   this.chart = chart;
-  this.list = list;
+  this.dataList = dataList;
+  this.inputs = inputs;
+  this.sensorsSrv = SensorsService;
 };
 
 nspChartRenderer.prototype.update = function() {
 
-  if (this.list) {
+  if (this.dataList) {
 
     var xaxes = [{}];
     var yaxes = [];
     var sensor_yaxes = {};
     var series = [];
 
-    for (var i = 0; i < this.list.length; i++) {
-      var data = this.list[i].data;
-      for (var sensor in data) {
-        var sensor_series_md = data[sensor];
-        if (sensor_series_md.length > 0) {
+    var showLabel = true;
+
+
+
+    for (var i = 0; i < this.dataList.length; i++) {
+      var data = this.dataList[i].data;
+
+      var color = 0;
+      for (var input in data) {
+        var input_series_data = data[input];
+        if (input_series_data.length > 0) {
           var p;
-          if (sensor in sensor_yaxes) {
-            p = sensor_yaxes[sensor];
+          if (input in sensor_yaxes) {
+            p = sensor_yaxes[input];
           } else {
             p = yaxes.length;
             yaxes.push({});
-            sensor_yaxes[sensor] = p;
+            sensor_yaxes[input] = p;
           }
 
           var yaxis = p + 1;
 
-          var dim = sensor_series_md[0].length - 1;
+          var dim = input_series_data[0].length - 1;
+
+          var t0 = input_series_data[0][0];
 
           for (var d = 1; d <= dim; d++) {
             var sensor_series = [];
-            for (var j = 0; j < Math.min(10, sensor_series_md.length); j++) {
-              sensor_series.push([sensor_series_md[j][0], sensor_series_md[j][d]]);
+
+            for (var j = 0; j < input_series_data.length; j++) {
+              var t = .001 * (input_series_data[j][0] - t0);
+              sensor_series.push([t, input_series_data[j][d]]);
             }
-            series.push({label: "" + d, data: sensor_series, yaxis: yaxis});
+
+
+            var label;
+            if (showLabel) {
+              var sensor = this.inputs[input].sensor;
+              var label = this.sensorsSrv.sensorTypes[sensor].labels[d-1];
+            } else {
+              label = false;
+            }
+            series.push({label: label, data: sensor_series, yaxis: yaxis, color: color});
+            color++;
           }
         }
       }
 
-      this.$element.css({width: '100%', height: '500px'});
-
-      $.plot(this.$element, series, {
-        xaxes: xaxes,
-        yaxes: yaxes
-      });
+      showLabel = false;
     }
+
+    this.$element.css({width: '100%', height: '500px'});
+    $.plot(this.$element, series, {
+      xaxes: xaxes,
+      yaxes: yaxes
+    });
   }
 
 
