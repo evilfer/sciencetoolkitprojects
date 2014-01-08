@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<div ng-if="!view.isOpen" class="nsp-buttons-on-hover">
+    <p>
+        <b>{{profile.title}}</b>
+        <span ng-if="profile.is_active">   
+            <button class="pure-button pure-button-primary pure-button-xsmall nsp-button-hidden" ng-click="actions.makeActive(false)">Make inactive</button>
+        </span>
+        <span ng-if="!profile.is_active">
+            <button class="pure-button pure-button-primary pure-button-xsmall nsp-button-hidden" ng-click="actions.makeActive(true)">Make active</button>
+            <button class="pure-button pure-button-primary pure-button-xsmall nsp-button-hidden" ng-click="actions.open()">Edit</button>
+            <button class="pure-button pure-button-primary pure-button-xsmall nsp-button-hidden" ng-click="actions.delete()">Delete</button>
+        </span>
+    </p>
+</div>
+<div ng-if="view.isOpen">
+    <form class="pure-form">
+        <fieldset>
+            <label>Profile title</label>
+            <input type="text" placeholder="title" ng-model="view.editingTitle" />
+        </fieldset>
+        <div>
+            <button class="pure-button pure-button-primary" ng-disabled="view.okButtonDisabled()" ng-click="actions.save()">Save</button>
+            <button class="pure-button pure-button-primary" ng-click="actions.cancel()">Cancel</button>
+        </div>
+    </form>
+</div>

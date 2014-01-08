@@ -8,7 +8,7 @@ angular.module('nspServices').factory('ModifyProjectService', ['$http', 'UpdateN
     service._post = function(data) {
       this.working = true;
       var self = this;
-      
+
       console.log(data);
       return $http.post('/api/projects', data).then(function(result) {
         console.log(result.data);
@@ -32,6 +32,26 @@ angular.module('nspServices').factory('ModifyProjectService', ['$http', 'UpdateN
         'action': 'submitprofile',
         'id': projectId,
         'profile': profile
+      };
+      return this._post(data);
+    };
+
+    service.setProfileTitle = function(projectId, profile) {
+      var data = {
+        'action': 'setprofiletitle',
+        'id': projectId,
+        'profileid': profile.id,
+        'title': profile.title
+      };
+      return this._post(data);
+    };
+
+    service.saveInput = function(projectId, profileId, input) {
+      var data = {
+        'action': 'saveinput',
+        'id': projectId,
+        'profileid': profileId,
+        'input': input
       };
       return this._post(data);
     };

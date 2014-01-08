@@ -14,7 +14,7 @@
             <label>samples/s</label>
             <button class="pure-button pure-button-xsmall" ng-click="profileActions.deleteProfileInput(input.id)">Delete</button>
             
-            <div nq-data-transformations ng-model="input"></div>
+            <div ng-include="'partials/transformations_form.html'" ng-controller="TransformationsEditCtrl"></div>
         </div>
         <div>
             <button class="pure-button pure-button-xsmall" ng-click="profileActions.addProfileInput()">Add sensor</button>

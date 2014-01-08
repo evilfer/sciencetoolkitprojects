@@ -69,3 +69,30 @@ h2 {
 .input-container {
     padding: 20px;
 }
+
+
+
+.nsp-transformations-form-list-item {
+    padding-bottom: 10px;
+}
+
+.nsp-buttons-on-hover .nsp-button-hidden {
+    opacity: 0;
+    -webkit-transition: opacity .2s;
+       -moz-transition: opacity .2s;
+            transition: opacity .2s;
+}
+.nsp-buttons-on-hover:hover .nsp-button-hidden {
+    opacity: 1;
+}
+
+
+.nsp-buttons-on-hover-b .nsp-button-hidden-b {
+    opacity: 0;
+    -webkit-transition: opacity .2s;
+       -moz-transition: opacity .2s;
+            transition: opacity .2s;
+}
+.nsp-buttons-on-hover-b:hover .nsp-button-hidden-b {
+    opacity: 1;
+}

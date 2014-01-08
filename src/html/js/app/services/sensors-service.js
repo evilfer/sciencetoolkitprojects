@@ -5,12 +5,12 @@ angular.module('nspServices').factory('SensorsService', [function() {
       sensorTypes: {
         'acc': {
           name: 'Accelerometer',
-          output: '[(txyz)]',
+          output: '[txyz]',
           labels: ['X (m/s)', 'Y (m/s)', 'Z (m/s)']
         },
         'lacc': {
           name: 'Linear acceleration',
-          output: '[(txyz)]',
+          output: '[txyz]',
           labels: ['X (m/s)', 'Y (m/s)', 'Z (m/s)']
         },
         'snd': {
@@ -20,25 +20,50 @@ angular.module('nspServices').factory('SensorsService', [function() {
         }
       },
       dataTypes: {
-        '(x)': 'Variable',
-        '(xy)': 'Vector 2D',
-        '(xyz)': 'Vector 3D',
-        '(tx)': 'Variable/time',
-        '(txy)': 'Vector 2D/time',
-        '(txyz)': 'Vector 3D/time',
-        '[(x)]': 'Variable sequence',
-        '[(xy)]': 'Vector 2D sequence',
-        '[(xyz)]': 'Vector 3D sequence',
-        '[(tx)]': 'Variable/time sequence',
-        '[(txy)]': 'Vector 2D/time sequence',
-        '[(txyz)]': 'Vector 3D/time sequence'
+        'x': '1D',
+        'xy': '2D',
+        'xyz': '3D',
+        'tx': '1D-time',
+        'txy': '2D-time',
+        'txyz': '3D-time',
+        '[x]': '1D series',
+        '[xy]': '2D series',
+        '[xyz]': '3D series',
+        '[tx]': '1D-time series',
+        '[txy]': '2D-time series',
+        '[txyz]': '3D-time series'
       },
       transformations: {
-        'vector-module': {
-          '(xyz)': '(x)',
-          '(txyz)': '(tx)',
-          '[(xyz)]': '[(x)]',
-          '[(txyz)]': '[(tx)]'
+        'module': {
+          name: "Module",
+          data: {
+            'xyz': 'x',
+            'txyz': 'tx',
+            '[xy]': '[x]',
+            '[txyz]': '[tx]'
+          }
+        },
+        'integrate': {
+          name: "Integrate",
+          data: {
+            '[tx]': '[tx]',
+            '[txy]': '[txy]',
+            '[txyz]': '[txyz]'
+          }
+        },
+        'max': {
+          name: "Max value",
+          data: {
+            '[x]': 'x',
+            '[tx]': 'tx'
+          }
+        },
+        'min': {
+          name: "Min value",
+          data: {
+            '[x]': 'x',
+            '[tx]': 'tx'
+          }
         }
       }
     };

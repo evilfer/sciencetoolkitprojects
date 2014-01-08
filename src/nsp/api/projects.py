@@ -52,6 +52,12 @@ class ProjectsApi(webapp2.RequestHandler):
         elif action == 'submitprofile':
             ok = project_manager.update_profiles(user, data)
             result = {'ok': ok}
+        elif action == 'setprofiletitle':
+            ok = project_manager.set_profile_title(user, data)
+            result = {'ok': ok}
+        elif action == 'saveinput':
+            ok = project_manager.save_input(user, data)
+            result = {'ok': ok}
         elif action == "changeprofilevisibility":
             ok = project_manager.change_profile_visibility(user, data)
             result = {'ok': ok}

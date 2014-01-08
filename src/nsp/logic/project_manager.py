@@ -80,6 +80,65 @@ def update_profiles(user, data):
     else:
         return False
 
+def save_input(user, data):
+    project = common.load_project(data, 'id')
+    if access.can_edit_project(user, project) and 'input' in data:
+        profileId = common.read_int(data, 'profileid', -1)
+        if profileId < 0:
+            return False
+
+        profile = common.get_profile(project, profileId)
+        if not profile:
+            return False
+
+        input_data = data['input']
+        input_id = common.read_int(input_data, 'id', -1)
+
+        if input_id < 0:
+            return False
+
+        input_to_update = common.get_sensorinput(profile, input_id)
+
+        if not input_to_update:
+            input_to_update = SensorInput(id = input_id, transformations = [])
+            profile.inputs.append(input_to_update)
+
+        input_to_update.sensor = input_data.get('sensor', '')
+        input_to_update.rate = common.read_float(input_data, 'rate', 10)
+
+        project.put()
+        return True
+
+    else:
+        return False
+
+
+def set_profile_title(user, data):
+    project = common.load_project(data, 'id')
+    if access.can_edit_project(user, project):
+        profileId = common.read_int(data, 'profileid', -1)
+
+        if profileId < 0:
+            return False
+
+        profile_to_update = common.get_profile(project, profileId)
+
+        if not profile_to_update:
+            profile_to_update = DataLoggingProfile(id = profileId, is_active = False, series_count = 0)
+            project.profiles.append(profile_to_update)
+        elif profile_to_update.is_active:
+            return False
+
+        if profile_to_update:
+            profile_to_update.title = data.get('title', '')
+            project.put()
+            return True
+        else:
+            return False
+
+    else:
+        return False
+
 def change_profile_visibility(user, data):
     project = common.load_project(data, 'id')
     if access.can_edit_project(user, project) and 'profile_id' in data:

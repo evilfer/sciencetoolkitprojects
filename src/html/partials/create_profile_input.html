@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<div class="nsp-buttons-on-hover" ng-if="!view.isOpen">
+    Input: {{view.sensorName()}}, {{input.rate}} samples/s.             
+    <button class="pure-button pure-button-primary pure-button-xsmall nsp-button-hidden" ng-click="actions.open()">Edit</button>
+    <button class="pure-button pure-button-primary pure-button-xsmall nsp-button-hidden" ng-click="actions.delete()">Delete</button>
+</div>
+<div ng-if="view.isOpen">
+    <form class="pure-form">
+        <fieldset>
+            <select ng-model="view.editingData.sensor">
+                <option value="">Select sensor</option>
+                <option value="acc">Accelerometer</option>
+                <option value="lacc">Linear acceleration</option>
+                <option value="snd">Sound</option>
+            </select>
+            <input type="text" placeholder="number" step="any" ng-model="view.editingData.rate" >
+            <label>samples/s</label>
+            <div>
+                <button class="pure-button pure-button-primary" ng-disabled="view.okButtonDisabled()" ng-click="actions.save()">Save</button>
+                <button class="pure-button pure-button-primary" ng-click="actions.cancel()">Cancel</button>
+            </div>
+        </fieldset>
+    </form>
+</div>

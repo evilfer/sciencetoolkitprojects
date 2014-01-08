@@ -1,10 +1,9 @@
 /*global angular, Math*/
 
-var myApp = angular.module('myApp');
-myApp.controller('CreateEditProfileCtrl', function($scope, SensorsService) {
+angular.module('myApp').controller('CreateEditProfileCtrl', function($scope, SensorsService) {
 
   $scope.sensorData = SensorsService;
-
+  
   $scope.profileActions = {
     _isOpen: false,
     _openId: null,
@@ -34,7 +33,7 @@ myApp.controller('CreateEditProfileCtrl', function($scope, SensorsService) {
       this.openProfile = null;
     },
     isOpen: function() {
-      return this._isOpen;
+      return this._isOpen !== false;
     },
     isNewProfile: function() {
       return this._openId === null;

@@ -1,0 +1,25 @@
+
+.nsp-dropdown-inline {
+    display: inline-block;
+}
+
+.nsp-dropdown {
+    position: relative;
+    box-sizing: border-box;
+}
+
+.nsp-dropdown button:after {
+    content: " \25BE";
+}
+
+.nsp-dropdown > .nsp-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0px;
+    display: none;
+    width: auto;
+}
+
+.nsp-dropdown:hover > .nsp-dropdown-menu {
+    display: block;
+}

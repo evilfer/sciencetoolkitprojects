@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<div ng-if="!view.isOpen">
+    <button class="pure-button pure-button-primary nsp-button-hidden-b" ng-click="actions.open()">Add new sensor</button>
+</div>
+<div ng-if="view.isOpen">
+    <form class="pure-form">
+        <fieldset>
+            <select ng-model="view.editingData.sensor">
+                <option value="">Select sensor</option>
+                <option value="acc">Accelerometer</option>
+                <option value="lacc">Linear acceleration</option>
+                <option value="snd">Sound</option>
+            </select>
+            <input type="text" placeholder="number" step="any" ng-model="view.editingData.rate" >
+            <label>samples/s</label>
+            <div>
+                <button class="pure-button pure-button-primary" ng-disabled="view.okButtonDisabled()" ng-click="actions.save()">Save</button>
+                <button class="pure-button pure-button-primary" ng-click="actions.cancel()">Cancel</button>
+            </div>
+        </fieldset>
+    </form>
+</div>

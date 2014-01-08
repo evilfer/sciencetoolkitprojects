@@ -7,26 +7,43 @@
     <div ng-if="bad">error</div>
     <div ng-if="!bad">
 
-        <h2>Project description</h2>
+        <div class="nsp-buttons-on-hover">
+            <h2>Project description</h2> 
 
-        <div ng-if="metadataEdition.isOpen">
-            <div ng-include="'partials/create_metadata_form.html'"></div>
-        </div>
-        <div ng-if="!metadataEdition.isOpen">
-            <p><b>{{project.title}}</b></p>
-            <p>{{project.description}}</p>
-            <button class="pure-button pure-button-primary" ng-click="metadataEdition.open()">Edit</button>
+            <div ng-if="metadataEdition.isOpen">
+                <div ng-include="'partials/create_metadata_form.html'"></div>
+            </div>
+            <div ng-if="!metadataEdition.isOpen">
+                <p><b>{{project.title}}</b> </p>
+                <p>{{project.description}}</p>
+                <button class="pure-button pure-button-primary nsp-button-hidden" ng-click="metadataEdition.open()">Edit</button>
+            </div>
         </div>
 
-        <h2>Project visibility</h2>
-        <div ng-if="project.is_public">
-            <p>This project is <b>public</b>, any user can see it.</p>
-            <button class="pure-button pure-button-primary" ng-click="projectActions.setIsPublic(false)">Make private</button>
+        <div class="nsp-buttons-on-hover">
+            <h2>Project visibility</h2>
+            <div ng-if="project.is_public">
+                <p>This project is <b>public</b>, any user can see it.</p>
+                <button class="pure-button pure-button-primary nsp-button-hidden" ng-click="projectActions.setIsPublic(false)">Make private</button>
+            </div>
+            <div ng-if="!project.is_public">
+                <p>This project is <b>private</b>, only you and the current members can see it.</p>
+                <button class="pure-button pure-button-primary nsp-button-hidden" ng-click="projectActions.setIsPublic(true)">Make public</button>
+            </div>
         </div>
-        <div ng-if="!project.is_public">
-            <p>This project is <b>private</b>, only you and the current members can see it.</p>
-            <button class="pure-button pure-button-primary" ng-click="projectActions.setIsPublic(true)">Make public</button>
+        
+        <h2>Data logging profiles</h2>
+        
+        <div ng-repeat="profile in project.profiles" class="profile nsp-buttons-on-hover-b">
+            <div ng-include="'partials/create_profile_title.html'" ng-controller='CreateEditProfileTitleCtrl'></div>
+            
+            <div ng-repeat="input in profile.inputs" ng-include="'partials/create_profile_input.html'" ng-controller="CreateEditProfileInputCtrl"></div>
+            
+            
+            <div ng-include="'partials/create_profile_input_new.html'" ng-controller="CreateEditProfileInputCtrl"></div>
         </div>
+        
+        <!--
 
         <div ng-controller="CreateEditProfileCtrl">
 
@@ -44,6 +61,7 @@
                 <h2>Data logging profiles</h2>
 
                 <div ng-repeat="profile in project.profiles" class="profile" >
+                    
                     <p>
                         <b>{{profile.title}}</b>
                         <span ng-if="profile.is_active">   
@@ -57,6 +75,7 @@
                     <ul>
                         <li ng-repeat="input in profile.inputs">
                             {{sensorData.sensorTypes[input.sensor].name}}: {{input.rate}} samples/s.
+                            <div ng-include="'partials/transformations_form.html'" ng-controller="TransformationsEditCtrl"></div>
                         </li>
                     </ul>
                 </div>
@@ -64,5 +83,6 @@
                 <button class="pure-button pure-button-primary" ng-click="profileActions.open()">Add profile</button>
             </div>
         </div>
+        -->
     </div>
 </div>
