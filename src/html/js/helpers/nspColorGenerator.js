@@ -5,14 +5,20 @@ var nspColorGenerator = {
   k: 3,
   step: 120,
   
-  getColor: function(n) {
-    return this.getHtml(this.getRGB(this.getAngle(n), 1, 1));
+  getColor: function(n, s, v) {
+    s = typeof s === 'undefined' ? 1 : s;
+    v = typeof v === 'undefined' ? 1 : v;
+    return this.getHtml(this.getRGB(this.getAngle(n), s, v));
   },
   
   getHtml: function(rgb) {
     var output = '#';
     for (var i = 0; i < 3; i++) {
-      output += Math.floor(255*rgb[i]).toString(16);
+      var pstr = Math.floor(255*rgb[i]).toString(16);
+      while(pstr.length < 2) {
+        pstr = '0' + pstr;
+      }
+      output += pstr;
     }
     return output;
   },

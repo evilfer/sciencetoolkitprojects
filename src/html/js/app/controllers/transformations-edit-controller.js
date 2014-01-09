@@ -52,7 +52,7 @@ angular.module('myApp').controller('TransformationsEditCtrl', function($scope, S
           }
         }
       }
-      
+
       return ts;
     },
     availableTransformations: function(dataType) {
@@ -66,7 +66,7 @@ angular.module('myApp').controller('TransformationsEditCtrl', function($scope, S
       return at;
     }
   };
-  
+
   $scope.view = {
     isOpen: false,
     okButtonDisabled: function() {
@@ -82,7 +82,6 @@ angular.module('myApp').controller('TransformationsEditCtrl', function($scope, S
     canTransform: function(t) {
       return this.isOpen && t.availableTransformations && t.availableTransformations.length > 0;
     },
-    
     atname: function(at) {
       return SensorsService.transformations[at].name;
     },
@@ -97,15 +96,21 @@ angular.module('myApp').controller('TransformationsEditCtrl', function($scope, S
     },
     oname: function(t) {
       return t.name;
+    },
+    ostyle: function(t) {      
+      return {fontFamily: 'monospace', fontWeight: 'bold', color: nspColorGenerator.getColor(t.id, 1, .4)};
+    },
+    istyle: function(t) {      
+      return {fontWeight: 'bold', 'color': nspColorGenerator.getColor(t.sourceid, 1, .4)};
     }
-    
+
   };
-  
-  
+
+
   $scope.view.reset();
 
-  
-  $scope.actions = {    
+
+  $scope.actions = {
     open: function() {
       $scope.view.isOpen = true;
     },
@@ -117,16 +122,28 @@ angular.module('myApp').controller('TransformationsEditCtrl', function($scope, S
       this.close();
     },
     save: function() {
-//      $scope.saveSrv.setProfileTitle($scope.project.id, $scope.profile);
+      var ts = [];
+      for (var i in $scope.view.viewTransformations) {
+        if (i > 0) {
+          var vt = $scope.view.viewTransformations[i];
+          ts.push({
+            id: vt.id,
+            sourceid: vt.sourceid,
+            transformation: vt.transformation,
+            display_name: vt.name
+          });
+        }
+      }
+      $scope.saveSrv.saveTransformations($scope.project.id, $scope.profile.id, $scope.input.id, ts);
       this.close();
     },
-    
     transform: function(source, transformation) {
       var ntInputType = source.output;
       var ntOutputType = SensorsService.transformations[transformation].data[ntInputType];
 
       var id = 1;
-      for (var tid in $scope.view.viewTransformations) {
+      for (var key in $scope.view.viewTransformations) {
+        var tid = $scope.view.viewTransformations[key].id;
         if (tid >= id) {
           id = tid + 1;
         }
@@ -145,9 +162,8 @@ angular.module('myApp').controller('TransformationsEditCtrl', function($scope, S
 
       $scope.view.viewTransformations[id] = nt;
     },
-    
     deleteTransformation: function(t) {
-      while(true) {
+      while (true) {
         var dependent = false;
         for (var i in $scope.view.viewTransformations) {
           if ($scope.view.viewTransformations[i].sourceid === t.id) {
@@ -155,17 +171,17 @@ angular.module('myApp').controller('TransformationsEditCtrl', function($scope, S
             break;
           }
         }
-        
+
         if (dependent) {
           this.deleteTransformation(dependent);
         } else {
           break;
-        }        
+        }
       }
-      
+
       delete $scope.view.viewTransformations[t.id];
     }
-    
+
   };
 
 });

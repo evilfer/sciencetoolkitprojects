@@ -49,36 +49,6 @@ def change_visibility(user, data):
     else:
         return False, False
 
-def update_profiles(user, data):
-    project = common.load_project(data, 'id')
-    if access.can_edit_project(user, project) and 'profile' in data:
-        profile_data = data['profile']
-        profileId = common.read_int(profile_data, 'id', -1)
-
-
-        if profileId < 0:
-            return False
-
-        profile_to_update = common.get_profile(project, profileId)
-
-        if not profile_to_update:
-            profile_to_update = DataLoggingProfile(id = profileId, is_active = False, series_count = 0)
-            project.profiles.append(profile_to_update)
-        elif profile_to_update.is_active:
-            return False
-
-        if profile_to_update:
-            print profile_data
-            _data2profile(profile_data, profile_to_update)
-            print profile_to_update
-            print project
-            project.put()
-            return True
-        else:
-            return False
-
-    else:
-        return False
 
 def save_input(user, data):
     project = common.load_project(data, 'id')
@@ -196,25 +166,35 @@ def change_profile_visibility(user, data):
 
     return False
 
-def _data2profile(profile_data, profile):
-    profile.title = profile_data.get('title', '')
-    profile.inputs = []
-    for input_data in profile_data.get('inputs', []):
-        input_id = common.read_int(input_data, 'id', 0)
-        sensor = input_data.get('sensor', '')
-        rate = common.read_float(input_data, 'rate')
-        sensor_input = SensorInput(id=input_id, sensor=sensor, rate=rate, transformations=[])
-        for transformation_data in input_data.get('transformations', []):
-            t_id = common.read_int(transformation_data, 'id', 0);
-            source_id = common.read_int(transformation_data, 'sourceid', 0);
-            t_code = transformation_data.get('transformation', '')
-            is_displayed = common.read_bool(transformation_data, 'is_displayed')
-            display_name = transformation_data.get('display_name', '')
-            transformation = Transformation(id=t_id, source_id=source_id, transformation=t_code, is_displayed=is_displayed, display_name=display_name)
+def save_transformations(user, data):
+    project = common.load_project(data, 'id')
+    if not access.can_edit_project(user, project):
+        return False
 
-            sensor_input.transformations.append(transformation)
+    profile_id = common.read_int(data, 'profileid', -1)
+    profile = common.get_profile(project, profile_id)
+    if not profile:
+        return False
 
-        profile.inputs.append(sensor_input)
+    input_id = common.read_int(data, 'inputid', -1)
+    sensor_input = common.get_sensorinput(profile, input_id)
+    if not sensor_input:
+        return False
+
+    sensor_input.transformations = []
+    nts = data.get('transformations', [])
+    for nt in nts:
+        t_id = common.read_int(nt, 'id', -1)
+        sourceid = common.read_int(nt, 'sourceid', -1)
+        name = nt.get('display_name', '')
+        transformation = nt.get('transformation', '')
+        sensor_input.transformations.append(Transformation(id=t_id, sourceid=sourceid, transformation=transformation, display_name=name))
+
+    project.put()
+
+    return True
+
+
 
 
 

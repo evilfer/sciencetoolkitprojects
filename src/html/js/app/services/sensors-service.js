@@ -34,8 +34,8 @@ angular.module('nspServices').factory('SensorsService', [function() {
         '[txyz]': '3D-time series'
       },
       transformations: {
-        'module': {
-          name: "Module",
+        'modulus': {
+          name: "Modulus",
           data: {
             'xyz': 'x',
             'txyz': 'tx',

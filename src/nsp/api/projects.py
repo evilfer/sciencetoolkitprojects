@@ -27,7 +27,7 @@ class ProjectsApi(webapp2.RequestHandler):
         if action == "get":
             project = project_manager.view_project(user, data)
             if project:
-                result = {'ok': True, 'project': self.project2dict(user, project, True, data.get('getdata', False))}
+                result = {'ok': True, 'project': self.project2dict(user, project, True, common.read_bool(data, 'getdata', False))}
             else:
                 result = {'ok': False}
 
@@ -49,9 +49,6 @@ class ProjectsApi(webapp2.RequestHandler):
         elif action == "changevisibility":
             ok, is_public = project_manager.change_visibility(user, data)
             result = {'ok': ok, 'is_public': is_public}
-        elif action == 'submitprofile':
-            ok = project_manager.update_profiles(user, data)
-            result = {'ok': ok}
         elif action == 'setprofiletitle':
             ok = project_manager.set_profile_title(user, data)
             result = {'ok': ok}
@@ -66,6 +63,9 @@ class ProjectsApi(webapp2.RequestHandler):
             result = {'ok': ok}
         elif action == "deleteinput":
             ok = project_manager.delete_input(user, data)
+            result = {'ok': ok}
+        elif action == "savetransformations":
+            ok = project_manager.save_transformations(user, data)
             result = {'ok': ok}
         elif action == "join" or action == "leave":
             project = project_manager.view_project(user, data)
@@ -114,6 +114,7 @@ class ProjectsApi(webapp2.RequestHandler):
                                     'rate': profile_input.rate,
                                     'transformations': []
                                     }
+
                     for transformation in profile_input.transformations:
                         result_transformation = {
                                                  'id': transformation.id,
@@ -135,7 +136,7 @@ class ProjectsApi(webapp2.RequestHandler):
                     for series in series_list:
                         if not series.profileid in result_series:
                             result_series[series.profileid] = []
-                        vectors = json.loads(series.data)
+                        vectors = data_manager.get_vectors(profile, series)
                         result_series[series.profileid].append({'userid': series.userid, 'data': vectors})
 
                 result_project['series'] = result_series

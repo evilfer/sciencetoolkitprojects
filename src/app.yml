@@ -18,3 +18,7 @@ handlers:
   static_dir: html/partials
 - url: /images
   static_dir: html/images
+
+libraries:
+- name: numpy
+  version: "1.6.1"

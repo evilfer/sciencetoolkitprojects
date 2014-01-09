@@ -22,7 +22,11 @@ def read_int(data, key, default_value=0):
 
 def read_bool(data, key, default_value=False):
     try:
-        return bool(data.get(key, default_value))
+        v = data.get(key, default_value)
+        if v == 'false':
+            return False
+        else:
+            return bool(v)
     except ValueError:
         return default_value
 

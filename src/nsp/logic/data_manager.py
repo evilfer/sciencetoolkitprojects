@@ -6,6 +6,9 @@ from nsp.logic import access
 
 from nsp.model.series import Series
 
+import numpy as np
+from nsp.maths import maths
+
 import logging
 import json
 
@@ -121,4 +124,39 @@ def upload_data2(user, csv):
         seriesObj.put();
 
     return result
+
+
+def get_vectors(profile, series):
+    # series.data -> {input_id -> data_array}
+    # output      -> {input_id -> {transformation -> data_array}}
+
+    vectors0 = json.loads(series.data)
+
+    vectors = {}
+
+    for input_id_str in vectors0:
+        input_id = common.str_to_int(input_id_str, -1)
+        sensor_input = common.get_sensorinput(profile, input_id)
+        input_vectors = {}
+        input_vectors[0] = vectors0[input_id_str]
+
+        for t in sensor_input.transformations:
+            input_vectors[t.id] = maths.transform(t.transformation, np.array(input_vectors[t.sourceid])).tolist()
+
+
+        vectors[input_id_str] = input_vectors
+
+    return vectors;
+
+
+
+
+
+
+
+
+
+
+
+
 

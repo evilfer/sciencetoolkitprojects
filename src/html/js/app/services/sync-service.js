@@ -3,10 +3,6 @@
 
 angular.module('nspServices').factory('SyncService', ['$http', function($http) {
     
-    $http.get('/api/subscriptions?action=myprofiles').then(function(result) {
-      console.log(result.data);
-    });
-
     var service = {
       status: false,
       ready: false,
@@ -20,6 +16,7 @@ angular.module('nspServices').factory('SyncService', ['$http', function($http) {
       },
       onSuccess: function(data) {
         if (!angular.equals(data, service.data)) {
+          console.log(data);
           service.data = data;
           service.ready = true;
           service.updating = false;

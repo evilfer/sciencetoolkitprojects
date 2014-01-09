@@ -64,7 +64,18 @@ angular.module('nspServices').factory('ModifyProjectService', ['$http', 'UpdateN
       };
       return this._post(data);
     };
-    
+
+    service.saveTransformations = function(projectId, profileId, inputId, transformations) {
+      var data = {
+        'action': 'savetransformations',
+        'id': projectId,
+        'profileid': profileId,
+        'inputid': inputId,
+        'transformations': transformations
+      };
+      return this._post(data);
+    };
+
     service.deleteInput = function(projectId, profileId, inputId) {
       var data = {
         'action': 'deleteinput',
