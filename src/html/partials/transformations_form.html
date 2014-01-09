@@ -1,28 +1,36 @@
 <!DOCTYPE html>
-<ol>
-    <li class="nsp-transformations-form-list-item" ng-repeat="t in transformations">
+<div class="nsp-buttons-on-hover">
+    <ol>
+        <li class="nsp-transformations-form-list-item" ng-repeat="t in view.viewTransformations">
 
-        <span ng-if="t.editable" class="pure-form"><b><input size="8" type="text" placeholder="Data name" ng-model="t.name"/></b></span>
-        <span ng-if="!t.editable"><b>{{view.oname(t)}}</b></span>
+            <span ng-if="view.canEdit(t)" class="pure-form"><b><input size="8" type="text" placeholder="Data name" ng-model="t.name"/></b></span>
+            <span ng-if="!view.canEdit(t)"><b>{{view.oname(t)}}</b></span>
 
-        <span ng-if="t.transformation">
-            <span> = </span>
-            <tt>{{view.tname(t)}}(</tt><b>{{view.iname(t)}}</b><tt>)</tt>                
-        </span>
+            <span ng-if="t.transformation">
+                <span> = </span>
+                <tt>{{view.tname(t)}}(</tt><b>{{view.iname(t)}}</b><tt>)</tt>                
+            </span>
 
-        <span> &#8594; <small><tt> [{{view.dname(t)}}]</tt></small></span>
+            <span> &#8594; <small><tt> [{{view.dname(t)}}]</tt></small></span>
 
 
 
-        <div ng-if="editingTransformations && t.availableTransformations.length > 0" class="nsp-dropdown nsp-dropdown-inline">
-            <button class="pure-button pure-button-xsmall">Transform</button>
-            <div class="nsp-dropdown-menu pure-menu pure-menu-open">
-                <ul>
-                    <li ng-repeat="at in t.availableTransformations"><a href="" ng-click="transformationActions.transform(t, at)">{{view.atname(at)}}</a></li>
-                </ul>                    
+            <div ng-if="view.canTransform(t)" class="nsp-dropdown nsp-dropdown-inline">
+                <button class="pure-button pure-button-xsmall">Transform</button>
+                <div class="nsp-dropdown-menu pure-menu pure-menu-open">
+                    <ul>
+                        <li ng-repeat="at in t.availableTransformations"><a href="" ng-click="actions.transform(t, at)">{{view.atname(at)}}</a></li>
+                    </ul>                    
+                </div>
             </div>
-        </div>
-
-        <button ng-if="t.editable && editingTransformations" class="pure-button pure-button-xsmall" ng-click="profileActions.deleteProfileInput(input.id)">Delete</button>
-    </li>
-</ol>
+            <button ng-if="view.canEdit(t)" class="pure-button pure-button-xsmall" ng-click="actions.deleteTransformation(t)">Delete</button>
+        </li>
+    </ol>
+    <div ng-if="view.isOpen">
+        <button class="pure-button pure-button-primary" ng-disabled="view.okButtonDisabled()" ng-click="actions.save()">Save transformations</button>
+        <button class="pure-button pure-button-primary" ng-click="actions.cancel()">Cancel</button>        
+    </div>
+    <div ng-if="!view.isOpen">
+        <button class="pure-button pure-button-primary nsp-button-hidden" ng-click="actions.open()">Edit transformations</button>
+    </div>
+</div>

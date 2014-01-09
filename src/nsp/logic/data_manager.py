@@ -1,4 +1,4 @@
-
+from google.appengine.ext import ndb
 
 
 from nsp.logic import common
@@ -14,6 +14,14 @@ data_size = {
              'lacc': 3,
              'snd': 1
              }
+
+def delete_profile_data(user, project, profileid):
+    if access.can_edit_project(user, project):
+        query = Series.query(ndb.AND(Series.projectid == project.key.id(), Series.profileid == profileid))
+        keys = query.fetch(keys_only=True)
+        ndb.delete_multi(keys)
+
+
 
 def list_project_data(user, project):
     if access.can_view_data(user, project):

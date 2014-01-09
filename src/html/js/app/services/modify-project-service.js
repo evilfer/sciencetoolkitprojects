@@ -46,12 +46,31 @@ angular.module('nspServices').factory('ModifyProjectService', ['$http', 'UpdateN
       return this._post(data);
     };
 
+    service.deleteProfile = function(projectId, profileId) {
+      var data = {
+        'action': 'deleteprofile',
+        'id': projectId,
+        'profileid': profileId
+      };
+      return this._post(data);
+    };
+
     service.saveInput = function(projectId, profileId, input) {
       var data = {
         'action': 'saveinput',
         'id': projectId,
         'profileid': profileId,
         'input': input
+      };
+      return this._post(data);
+    };
+    
+    service.deleteInput = function(projectId, profileId, inputId) {
+      var data = {
+        'action': 'deleteinput',
+        'id': projectId,
+        'profileid': profileId,
+        'inputid': inputId
       };
       return this._post(data);
     };

@@ -9,7 +9,7 @@ angular.module('myApp').controller('CreateEditProfileInputCtrl', function($scope
     isOpen: false,
     editingData: null,
     okButtonDisabled: function() {
-      return false;
+      return this.editingData.sensor === '' || isNaN(this.editingData.rate) || this.editingData.rate <= 0;
     },
     sensorName: function() {
       return SensorsService.sensorTypes[$scope.input.sensor].name;
@@ -48,6 +48,11 @@ angular.module('myApp').controller('CreateEditProfileInputCtrl', function($scope
       }
       $scope.saveSrv.saveInput($scope.project.id, $scope.profile.id, input);
       this.close();
+    },
+    deleteInput: function() {
+      if (!$scope.isNew) {
+        $scope.saveSrv.deleteInput($scope.project.id, $scope.profile.id, $scope.input.id);
+      }
     }
   };
 });

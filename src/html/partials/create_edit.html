@@ -37,52 +37,12 @@
         <div ng-repeat="profile in project.profiles" class="profile nsp-buttons-on-hover-b">
             <div ng-include="'partials/create_profile_title.html'" ng-controller='CreateEditProfileTitleCtrl'></div>
             
-            <div ng-repeat="input in profile.inputs" ng-include="'partials/create_profile_input.html'" ng-controller="CreateEditProfileInputCtrl"></div>
+            <div ng-repeat="input in profile.inputs">
+                <div ng-include="'partials/create_profile_input.html'" ng-controller="CreateEditProfileInputCtrl"></div>
+                <div ng-include="'partials/transformations_form.html'" ng-controller="TransformationsEditCtrl"></div>
+            </div> 
             
-            
-            <div ng-include="'partials/create_profile_input_new.html'" ng-controller="CreateEditProfileInputCtrl"></div>
+            <div ng-include="'partials/create_profile_input.html'" ng-controller="CreateEditProfileInputCtrl"></div>
         </div>
-        
-        <!--
-
-        <div ng-controller="CreateEditProfileCtrl">
-
-            <div ng-if="profileActions.isOpen()">
-                <div ng-if="profileActions.isEditingNew()">
-                    <h2>New data logging profile</h2>
-                </div>
-                <div ng-if="!profileActions.isEditingNew()">
-                    <h2>Edit data logging profile <b>{{profileActions.openProfile.title}}</b></h2>
-                </div>
-                <div ng-include="'partials/create_profile_form.html'"></div>
-
-            </div>
-            <div ng-if="!profileActions.isOpen()">
-                <h2>Data logging profiles</h2>
-
-                <div ng-repeat="profile in project.profiles" class="profile" >
-                    
-                    <p>
-                        <b>{{profile.title}}</b>
-                        <span ng-if="profile.is_active">   
-                            <button class="pure-button pure-button-primary pure-button-xsmall" ng-click="profileActions.makeActive(profile.id, false)">Make inactive</button>
-                        </span>
-                        <span ng-if="!profile.is_active">
-                            <button class="pure-button pure-button-primary pure-button-xsmall" ng-click="profileActions.open(profile.id)">Edit</button>
-                            <button class="pure-button pure-button-primary pure-button-xsmall" ng-click="profileActions.makeActive(profile.id, true)">Make active</button>
-                        </span>
-                    </p>
-                    <ul>
-                        <li ng-repeat="input in profile.inputs">
-                            {{sensorData.sensorTypes[input.sensor].name}}: {{input.rate}} samples/s.
-                            <div ng-include="'partials/transformations_form.html'" ng-controller="TransformationsEditCtrl"></div>
-                        </li>
-                    </ul>
-                </div>
-
-                <button class="pure-button pure-button-primary" ng-click="profileActions.open()">Add profile</button>
-            </div>
-        </div>
-        -->
     </div>
 </div>

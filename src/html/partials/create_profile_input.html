@@ -1,15 +1,22 @@
 <!DOCTYPE html>
 
-<div class="nsp-buttons-on-hover" ng-if="!view.isOpen">
-    Input: {{view.sensorName()}}, {{input.rate}} samples/s.             
-    <button class="pure-button pure-button-primary pure-button-xsmall nsp-button-hidden" ng-click="actions.open()">Edit</button>
-    <button class="pure-button pure-button-primary pure-button-xsmall nsp-button-hidden" ng-click="actions.delete()">Delete</button>
+
+<div ng-if="!view.isOpen">
+    <div ng-if="isNew">
+        <button class="pure-button pure-button-primary nsp-button-hidden-b" ng-click="actions.open()">Add new sensor</button>
+    </div>
+    <div ng-if="!isNew" class="nsp-buttons-on-hover" ng-if="!view.isOpen">
+        Input: {{view.sensorName()}}, {{input.rate}} samples/s.             
+        <button class="pure-button pure-button-primary pure-button-xsmall nsp-button-hidden" ng-click="actions.open()">Edit sensor input</button>
+        <button class="pure-button pure-button-primary pure-button-xsmall nsp-button-hidden" ng-click="actions.deleteInput()">Delete sensor input</button>
+    </div>
 </div>
+
 <div ng-if="view.isOpen">
     <form class="pure-form">
         <fieldset>
             <select ng-model="view.editingData.sensor">
-                <option value="">Select sensor</option>
+                <option value="">- select sensor -</option>
                 <option value="acc">Accelerometer</option>
                 <option value="lacc">Linear acceleration</option>
                 <option value="snd">Sound</option>

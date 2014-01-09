@@ -61,6 +61,12 @@ class ProjectsApi(webapp2.RequestHandler):
         elif action == "changeprofilevisibility":
             ok = project_manager.change_profile_visibility(user, data)
             result = {'ok': ok}
+        elif action == "deleteprofile":
+            ok = project_manager.delete_profile(user, data)
+            result = {'ok': ok}
+        elif action == "deleteinput":
+            ok = project_manager.delete_input(user, data)
+            result = {'ok': ok}
         elif action == "join" or action == "leave":
             project = project_manager.view_project(user, data)
 

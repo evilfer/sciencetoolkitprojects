@@ -8,7 +8,7 @@ angular.module('myApp').controller('CreateEditProfileTitleCtrl', function($scope
     isOpen: false,
     editingTitle: null,
     okButtonDisabled: function() {
-      return false;
+      return !(this.editingTitle && this.editingTitle.length > 0);
     }
   };
   
@@ -27,6 +27,12 @@ angular.module('myApp').controller('CreateEditProfileTitleCtrl', function($scope
       $scope.profile.title = $scope.view.editingTitle;
       $scope.saveSrv.setProfileTitle($scope.project.id, $scope.profile);
       this.close();
+    },
+    makeActive: function(active) {
+      $scope.modifyProjectSrv.setProfileIsActive($scope.project.id, $scope.profile.id, active);
+    },
+    deleteProfile: function() {
+      $scope.modifyProjectSrv.deleteProfile($scope.project.id, $scope.profile.id);
     }
   };
 });

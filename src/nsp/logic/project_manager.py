@@ -6,7 +6,7 @@ from nsp.model.profile import DataLoggingProfile
 from nsp.model.profile import SensorInput
 from nsp.model.profile import Transformation
 
-import access, common, subscription_manager
+import access, common, subscription_manager, data_manager
 
 
 def view_project(user, data):
@@ -112,6 +112,30 @@ def save_input(user, data):
     else:
         return False
 
+def delete_input(user, data):
+    project = common.load_project(data, 'id')
+    if access.can_edit_project(user, project):
+        profile_id = common.read_int(data, 'profileid', -1)
+        if profile_id < 0:
+            return False
+
+        profile = common.get_profile(project, profile_id)
+        if not profile:
+            return False
+
+        input_id = common.read_int(data, 'inputid', -1)
+
+        if input_id < 0:
+            return False
+
+        for idx, profile_input in enumerate(profile.inputs):
+            if profile_input.id == input_id:
+                del profile.inputs[idx]
+                project.put()
+                return True
+
+    return False
+
 
 def set_profile_title(user, data):
     project = common.load_project(data, 'id')
@@ -138,6 +162,25 @@ def set_profile_title(user, data):
 
     else:
         return False
+
+
+def delete_profile(user, data):
+    project = common.load_project(data, 'id')
+    if access.can_edit_project(user, project):
+        profileid = common.read_int(data, 'profileid', -1)
+
+        if profileid < 0:
+            return False
+
+        for idx, profile in enumerate(project.profiles):
+            if profile.id == profileid:
+                del project.profiles[idx]
+                project.put()
+                data_manager.delete_profile_data(user, project, profileid)
+                return True
+
+        return False
+
 
 def change_profile_visibility(user, data):
     project = common.load_project(data, 'id')
