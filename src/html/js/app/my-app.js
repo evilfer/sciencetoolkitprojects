@@ -1,4 +1,4 @@
-/*global console, angular*/
+/*global angular*/
 
 var myApp = angular.module('myApp', ['nspServices', /* 'directive.g+signin',*/ 'ui.router', 'angularFileUpload']);
 
@@ -60,7 +60,6 @@ myApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $
 
 function signinCallback(authResult) {
 
-  console.log(authResult);
   if (authResult.access_token) {
     // User successfully authorized the G+ App!
 

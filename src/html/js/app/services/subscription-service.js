@@ -9,9 +9,7 @@ angular.module('nspServices').factory('SubscriptionService', ['$http', function(
       this.working = true;
       var self = this;
 
-      console.log(data);
       return $http.post('/api/subscriptions', data).then(function(result) {
-        console.log(result.data);
         self.working = false;
         return result.data;
       });

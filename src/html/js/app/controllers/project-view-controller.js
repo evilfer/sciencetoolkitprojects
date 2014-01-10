@@ -19,15 +19,22 @@ myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdServ
       $scope.project = $scope.syncService.data.project;
       $scope.profileCharts = {};
       if ($scope.project) {
+        $scope.project.series = nspZlib.decompressObj($scope.project.series);
+        
         for (var profile_id in $scope.project.series) {
           if ($scope.project.series[profile_id].length > 0) {
             $scope.profileCharts[profile_id] = {};
             for (var input_id in $scope.project.series[profile_id][0].data) {
+              var transformations = $scope.project.profiles[profile_id].inputs[input_id].transformations;
+              
               for (var variable_id in $scope.project.series[profile_id][0].data[input_id]) {
+                var title = variable_id in transformations ? transformations[variable_id].display_name : 'Raw data';
+                
                 $scope.profileCharts[profile_id][input_id + "." + variable_id] = {
                   profile: profile_id,
                   input: input_id,
-                  variable: variable_id
+                  variable: variable_id,
+                  title: title
                 };
               }
             }
@@ -35,7 +42,6 @@ myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdServ
         }
       }
 
-      console.log($scope.profileCharts);
       $scope.bad = false;
       $scope.ready = true;
     });
@@ -54,7 +60,6 @@ myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdServ
   });
 
   var changeProfileCallback = function(result) {
-    console.log(result);
     if (result.ok) {
       $scope.project.profiles[result.profileid].installed = result.installed;
     }
@@ -76,14 +81,14 @@ myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdServ
     count: function(series) {
       var count = 0;
       for (var key in series.data) {
-        count += series.data[key].length;
+        count += series.data[key][0].length;
       }
       return count;
     },
     length: function(series) {
       var length = 0;
       for (var key in series.data) {
-        var d = series.data[key];
+        var d = series.data[key][0];
         if (d.length > 1) {
           length = Math.max(length, d[d.length - 1][0] - d[0][0]);
         }

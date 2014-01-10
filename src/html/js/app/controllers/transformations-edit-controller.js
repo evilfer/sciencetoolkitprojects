@@ -32,7 +32,7 @@ angular.module('myApp').controller('TransformationsEditCtrl', function($scope, S
       };
 
       if (transformations) {
-        for (var i = 0; i < transformations.length; i++) {
+        for (var i in transformations) {
           var rt = transformations[i];
           ts[rt.id] = {
             id: rt.id,

@@ -58,6 +58,7 @@
         </div>
         <div ng-switch-default>
             <div ng-repeat="chart in profileCharts[profile.id]">
+                <h3>{{chart.title}}</h3>
                 <div data-nq-flot-chart data-chart="chart" data-project="project"/>
             </div>
         </div>

@@ -3,11 +3,12 @@ from google.appengine.ext import ndb
 
 from nsp.logic import common
 from nsp.logic import access
-
+from nsp.maths import maths
 from nsp.model.series import Series
 
+from nsp.cache import dataupdate
+
 import numpy as np
-from nsp.maths import maths
 
 import logging
 import json
@@ -122,6 +123,7 @@ def upload_data2(user, csv):
         metadata = {'sensors': sensorNames}
         seriesObj = Series(projectid=project.key.id(), profileid=profile.id, userid=user.user_id(), data=json.dumps(series), metadata=json.dumps(metadata))
         seriesObj.put();
+        dataupdate.data_modified(project)
 
     return result
 

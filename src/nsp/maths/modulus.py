@@ -1,6 +1,5 @@
 
 
-import maths
 import numpy as np
 
 def t(data):

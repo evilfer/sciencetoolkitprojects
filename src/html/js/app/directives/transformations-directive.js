@@ -4,8 +4,6 @@ angular.module('myApp').directive('nqDataTransformations', ['SensorsService', fu
         ngModel: '='
       },
       link: function(scope, element, attrs) {
-        console.log(scope.ngModel);
-        console.log(SensorsService);
         var $element = angular.element(element);
 
         var renderer = new nspTransformationsRenderer($element, scope.ngModel, SensorsService);

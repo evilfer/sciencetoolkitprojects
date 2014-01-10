@@ -5,6 +5,7 @@ from nsp.model.subscription import Subscription
 from nsp.model.profile import DataLoggingProfile
 from nsp.model.profile import SensorInput
 from nsp.model.profile import Transformation
+from nsp.cache import dataupdate
 
 import access, common, subscription_manager, data_manager
 
@@ -191,6 +192,9 @@ def save_transformations(user, data):
         sensor_input.transformations.append(Transformation(id=t_id, sourceid=sourceid, transformation=transformation, display_name=name))
 
     project.put()
+
+    dataupdate.data_modified(project)
+
 
     return True
 

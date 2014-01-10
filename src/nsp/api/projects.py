@@ -4,6 +4,7 @@ import json
 from google.appengine.api import users
 
 from nsp.logic import project_manager, data_manager, subscription_manager, common
+from nsp.cache import datacache
 
 class ProjectsApi(webapp2.RequestHandler):
 
@@ -98,21 +99,21 @@ class ProjectsApi(webapp2.RequestHandler):
                           }
 
         if detailed:
-            result_project['profiles'] = []
+            result_project['profiles'] = {}
             for profile in project.profiles:
                 result_profile = {
                                   'id': profile.id,
                                   'is_active': profile.is_active,
                                   'title': profile.title,
                                   'installed': im_member and profile.id in subscription.profiles,
-                                  'inputs': []
+                                  'inputs': {}
                                   }
                 for profile_input in profile.inputs:
                     result_input = {
                                     'id': profile_input.id,
                                     'sensor': profile_input.sensor,
                                     'rate': profile_input.rate,
-                                    'transformations': []
+                                    'transformations': {}
                                     }
 
                     for transformation in profile_input.transformations:
@@ -123,21 +124,14 @@ class ProjectsApi(webapp2.RequestHandler):
                                                  'is_displayed': transformation.is_displayed,
                                                  'display_name': transformation.display_name
                                                  }
-                        result_input['transformations'].append(result_transformation)
+                        result_input['transformations'][transformation.id] = result_transformation
 
-                    result_profile['inputs'].append(result_input)
+                    result_profile['inputs'][profile_input.id] = result_input
 
-                result_project['profiles'].append(result_profile)
+                result_project['profiles'][profile.id] = result_profile
 
             if loaddata:
-                result_series = {}
-                series_list = data_manager.list_project_data(user, project)
-                if series_list:
-                    for series in series_list:
-                        if not series.profileid in result_series:
-                            result_series[series.profileid] = []
-                        vectors = data_manager.get_vectors(profile, series)
-                        result_series[series.profileid].append({'userid': series.userid, 'data': vectors})
+                result_series = datacache.load_project_data(user, project)
 
                 result_project['series'] = result_series
 

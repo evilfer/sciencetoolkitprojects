@@ -24,7 +24,7 @@ nspChartRenderer.prototype.update = function() {
     for (var i = 0; i < this.dataList.length; i++) {
       var data = this.dataList[i].data;
 
-      var color = 0;
+      var color = i;
 
       var input_series_data = data[this.chart.input][this.chart.variable];
       if (input_series_data.length > 0) {
@@ -60,7 +60,6 @@ nspChartRenderer.prototype.update = function() {
             label = false;
           }
           series.push({label: label, data: sensor_series, yaxis: yaxis, color: color});
-          color++;
         }
       }
 

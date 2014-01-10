@@ -2,15 +2,16 @@
 
 import modulus
 import integrate
-import logging
+import gety
+import removecc
 
 transformations = {
                    'modulus': modulus.t,
-                   'integrate': integrate.t
+                   'integrate': integrate.t,
+                   'gety': gety.t,
+                   'removecc': removecc.t
                    }
 
-def register(name, t):
-    transformations[name] = t
 
 
 def transform(transformation, vector):
