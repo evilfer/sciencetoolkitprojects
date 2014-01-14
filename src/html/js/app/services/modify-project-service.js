@@ -39,6 +39,7 @@ angular.module('nspServices').factory('ModifyProjectService', ['$http', 'UpdateN
         'action': 'setprofiletitle',
         'id': projectId,
         'profileid': profile.id,
+        'requires_location': profile.requires_location,
         'title': profile.title
       };
       return this._post(data);

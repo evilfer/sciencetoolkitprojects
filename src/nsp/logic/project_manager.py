@@ -5,7 +5,6 @@ from nsp.model.subscription import Subscription
 from nsp.model.profile import DataLoggingProfile
 from nsp.model.profile import SensorInput
 from nsp.model.profile import Transformation
-from nsp.cache import dataupdate
 
 import access, common, subscription_manager, data_manager
 
@@ -126,6 +125,7 @@ def set_profile_title(user, data):
 
         if profile_to_update:
             profile_to_update.title = data.get('title', '')
+            profile_to_update.requires_location = data.get('requires_location', False)
             project.put()
             return True
         else:
@@ -192,9 +192,6 @@ def save_transformations(user, data):
         sensor_input.transformations.append(Transformation(id=t_id, sourceid=sourceid, transformation=transformation, display_name=name))
 
     project.put()
-
-    dataupdate.data_modified(project)
-
 
     return True
 

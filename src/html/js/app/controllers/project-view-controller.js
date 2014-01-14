@@ -2,14 +2,13 @@
 
 var myApp = angular.module('myApp');
 
-myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdService, SyncService, SubscriptionService, SensorsService) {
+myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdService, SyncService, SubscriptionService, SensorsService, TransformationSelectorService) {
   $scope.request = ProjectIdService.check($stateParams);
 
   $scope.watchers = new nspWatchers();
 
   $scope.syncService = SyncService;
-
-
+  
 
   if ($scope.request.projectId) {
     $scope.project = null;
@@ -18,28 +17,64 @@ myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdServ
     $scope.watchers.watch($scope, 'syncService.data', function() {
       $scope.project = $scope.syncService.data.project;
       $scope.profileCharts = {};
+      $scope.profileMaps = {};
+      
       if ($scope.project) {
-        $scope.project.series = nspZlib.decompressObj($scope.project.series);
+        TransformationSelectorService.init($scope.project);
+        $scope.transformationSelector = TransformationSelectorService.selection[$scope.project.id];
+        
+        var rawSeries = nspZlib.decompressObj($scope.project.data);
+        $scope.project.series = nspMaths.transformSeries(rawSeries, $scope.project.profiles);
+        delete $scope.project['data'];
         
         for (var profile_id in $scope.project.series) {
           if ($scope.project.series[profile_id].length > 0) {
+            var profile = $scope.project.profiles[profile_id];
+            
+            if (profile.requires_location) {
+              $scope.profileMaps[profile_id] = {};
+            }
+            
             $scope.profileCharts[profile_id] = {};
+            
+            
             for (var input_id in $scope.project.series[profile_id][0].data) {
-              var transformations = $scope.project.profiles[profile_id].inputs[input_id].transformations;
-              
+              var transformations = profile.inputs[input_id].transformations;
+            
               for (var variable_id in $scope.project.series[profile_id][0].data[input_id]) {
-                var title = variable_id in transformations ? transformations[variable_id].display_name : 'Raw data';
+                var title, type, units;
+                if (variable_id in transformations) {
+                  var t = transformations[variable_id];
+                  title = t.display_name;
+                  var sourceChart = $scope.profileCharts[profile_id][input_id + "." + t.sourceid];
+                  type = SensorsService.transformType(sourceChart.type, t.transformation);
+                  units = SensorsService.transformUnits(sourceChart.units, t.transformation);
+                } else {
+                  var sensor = profile.inputs[input_id].sensor;
+                  title = 'Raw data';
+                  units = SensorsService.sensorTypes[sensor].units;
+                  type = SensorsService.sensorTypes[sensor].output;
+                }
+                
+                if (type === 'x' || type === 'tx') {
+                  $scope.profileMaps[profile_id][variable_id] = title;
+                }
                 
                 $scope.profileCharts[profile_id][input_id + "." + variable_id] = {
                   profile: profile_id,
                   input: input_id,
                   variable: variable_id,
-                  title: title
+                  title: title,
+                  type: type,
+                  units: units,
+                  unitLabel: SensorsService.unitsToStr(units)
                 };
               }
             }
           }
         }
+        
+        console.log($scope.profileMaps);
       }
 
       $scope.bad = false;
@@ -95,6 +130,9 @@ myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdServ
       }
 
       return .001 * length;
+    },
+    location: function(series) {
+      return series.metadata.location.lat + " " + series.metadata.location.lon;
     }
   };
 
@@ -103,11 +141,13 @@ myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdServ
   };
 
   $scope.view = {
-    tab: 'series',
+    tab: 'map',
     openTab: function(tab) {
       this.tab = tab;
     }
   };
-
+  
+  $scope.transformationSelector = {};
+  
 });
 

@@ -72,7 +72,16 @@ class SubscriptionsApi(webapp2.RequestHandler):
         json.dump(result, self.response)
 
     def profile_to_dict(self, profile):
-        profile_result = {'id': profile.id, 'title': profile.title, 'series_count': profile.series_count, 'inputs': {}}
+        profile_result = {
+                          'id': profile.id,
+                          'title': profile.title,
+                          'series_count': profile.series_count,
+                          'requires_location': profile.requires_location,
+                          'inputs': {}
+                          }
         for profile_input in profile.inputs:
-            profile_result['inputs'][profile_input.id] = {'id': profile_input.id, 'sensor': profile_input.sensor, 'rate': profile_input.rate}
+            profile_result['inputs'][profile_input.id] = {
+                                                          'id': profile_input.id,
+                                                          'sensor': profile_input.sensor,
+                                                          'rate': profile_input.rate}
         return profile_result

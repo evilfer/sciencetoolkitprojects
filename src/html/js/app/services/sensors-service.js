@@ -77,7 +77,7 @@ angular.module('nspServices').factory('SensorsService', [function() {
           name: "Max value",
           data: {
             '[x]': 'x',
-            '[tx]': 'tx'
+            '[tx]': 'x'
           },
           units: {}
         },
@@ -85,7 +85,7 @@ angular.module('nspServices').factory('SensorsService', [function() {
           name: "Min value",
           data: {
             '[x]': 'x',
-            '[tx]': 'tx'
+            '[tx]': 'x'
           },
           units: {}
         }
@@ -96,9 +96,17 @@ angular.module('nspServices').factory('SensorsService', [function() {
       },
       unitsToStr: function(units) {
         var output = '';
+
+        var singleNegativeUnit = -1;
+        for (var unit in units) {
+          if (units[unit] < 0) {
+            singleNegativeUnit = singleNegativeUnit === -1 ? unit : -2;
+          }
+        }
+
         for (var unit in units) {
           var n = units[unit];
-          if (n !== 0) {
+          if (n !== 0 && unit !== singleNegativeUnit) {
             if (output.length > 0) {
               output += ' ';
             }
@@ -109,17 +117,31 @@ angular.module('nspServices').factory('SensorsService', [function() {
             }
           }
         }
+
+        if (singleNegativeUnit in units) {
+          output += ' / ' + unit;
+          if (units[unit] !== -1) {
+            output += '<sup>' + -n + '</sup>';
+          }
+        }
+
         return output;
+      },
+      transformType: function(type, transform) {
+        return this.transformations[transform].data[type];
       },
       transformUnits: function(units, transform) {
         var change = this.transformations[transform].units;
+        var result = nspClone(units);
+
         for (var unit in change) {
-          if (unit in units) {
-            units[unit] += change[unit];
+          if (unit in result) {
+            result[unit] += change[unit];
           } else {
-            units[unit] = change[unit];
+            result[unit] = change[unit];
           }
         }
+        return result;
       }
 
 

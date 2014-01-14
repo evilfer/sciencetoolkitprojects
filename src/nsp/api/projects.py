@@ -106,6 +106,7 @@ class ProjectsApi(webapp2.RequestHandler):
                                   'is_active': profile.is_active,
                                   'title': profile.title,
                                   'installed': im_member and profile.id in subscription.profiles,
+                                  'requires_location': profile.requires_location,
                                   'inputs': {}
                                   }
                 for profile_input in profile.inputs:
@@ -133,7 +134,7 @@ class ProjectsApi(webapp2.RequestHandler):
             if loaddata:
                 result_series = datacache.load_project_data(user, project)
 
-                result_project['series'] = result_series
+                result_project['data'] = result_series
 
         return result_project
 

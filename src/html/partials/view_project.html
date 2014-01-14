@@ -37,7 +37,9 @@
     <div class="pure-menu pure-menu-open pure-menu-horizontal">
         <ul>
             <li ng-class="{'pure-menu-selected': view.tab === 'series'}"><a href="" ng-click="view.openTab('series')">Data series</a></li>
+            <li ng-class="{'pure-menu-selected': view.tab === 'transformations'}"><a href="" ng-click="view.openTab('transformations')">Data processing</a></li>
             <li ng-class="{'pure-menu-selected': view.tab === 'plot'}"><a href="" ng-click="view.openTab('plot')">Plot</a></li>
+            <li ng-if="profileMaps[profile.id]" ng-class="{'pure-menu-selected': view.tab === 'map'}"><a href="" ng-click="view.openTab('map')">Map</a></li>
         </ul>
     </div>
 
@@ -46,21 +48,59 @@
             <table class="pure-table">
                 <thead>
                     <tr>
-                        <th>#</th><th>Samples</th><th>Length (s)</th><th>Selected</th>
+                        <th>#</th><th>Samples</th><th>Length (s)</th><th ng-if="profileMaps[profile.id]">Position</th><th>Selected</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr ng-repeat="series in project.series[profile.id]">
-                        <td>{{$index + 1}}</td><td>{{seriesData.count(series)}}</td><td>{{seriesData.length(series).toFixed(2)}}</td><td><input type="checkbox" /></td>
+                        <td>{{$index + 1}}</td><td>{{seriesData.count(series)}}</td><td>{{seriesData.length(series).toFixed(2)}}</td>
+                        
+                        <td ng-if="profileMaps[profile.id]">{{seriesData.location(series)}}</td>
+                        <td><input type="checkbox" /></td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <div ng-switch-default>
-            <div ng-repeat="chart in profileCharts[profile.id]">
-                <h3>{{chart.title}}</h3>
-                <div data-nq-flot-chart data-chart="chart" data-project="project"/>
+        <div ng-switch-when="transformations">
+            <div ng-repeat="input in profile.inputs">
+                <table class="pure-table" ng-controller="TransformationsEditCtrl">
+                    <thead>
+                        <tr>
+                            <th>{{view.inputName(input)}}</th><th>Show plot</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="t in view.viewTransformations">
+                            <td>
+                    <tt><span ng-style="view.ostyle(t)">{{view.oname(t)}}</span>
+                        <span ng-if="t.transformation">
+                            = {{view.tname(t)}}(<span ng-style="view.istyle(t)">{{view.iname(t)}}</span>)                
+                        </span>
+
+                        <span> &#8594; <small> [{{view.dname(t)}}]</small></span>
+                    </tt>
+
+                    </td>
+                    <td><input type="checkbox" ng-model="transformationSelector[profile.id][input.id][t.id]"/></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
+
+        </div>
+        <div ng-switch-when="plot">
+            <div ng-repeat="chart in profileCharts[profile.id]">
+                <div ng-if="transformationSelector[chart.profile][chart.input][chart.variable]">
+                    <h3>{{chart.title}}</h3>
+                    <div data-nq-flot-chart data-chart="chart" data-project="project"></div>
+                </div>
+            </div>
+        </div>
+        <div ng-switch-when="map">
+            <div data-nq-map data-maps="profileMaps" data-project="project" data-profileid="profile.id"></div>
+        </div>
+        <div ng-switch-default>
+            !
         </div>
     </div>
 

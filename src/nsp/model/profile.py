@@ -22,9 +22,11 @@ class SensorInput(ndb.Model):
 class DataLoggingProfile(ndb.Model):
     id = ndb.IntegerProperty()
     title = ndb.StringProperty()
-    is_active = ndb.BooleanProperty()
-    series_count = ndb.IntegerProperty()
+    is_active = ndb.BooleanProperty(default=False)
+    series_count = ndb.IntegerProperty(default=0)
     inputs = ndb.LocalStructuredProperty(SensorInput, repeated=True)
+    requires_location = ndb.BooleanProperty(default=False)
+
 
 
 

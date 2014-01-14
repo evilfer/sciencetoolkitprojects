@@ -3,12 +3,13 @@
 <div ng-if="!view.isOpen" class="nsp-buttons-on-hover">
     <p>
         <b>{{profile.title}}</b>
+        <span ng-if="profile.requires_location"><small>(Geolocated data)</small></span>
         <span ng-if="profile.is_active">   
             <button class="pure-button pure-button-primary pure-button-xsmall nsp-button-hidden" ng-click="actions.makeActive(false)">Make inactive</button>
         </span>
         <span ng-if="!profile.is_active">
             <button class="pure-button pure-button-primary pure-button-xsmall nsp-button-hidden" ng-click="actions.makeActive(true)">Make active</button>
-            <button class="pure-button pure-button-primary pure-button-xsmall nsp-button-hidden" ng-click="actions.open()">Edit title</button>
+            <button class="pure-button pure-button-primary pure-button-xsmall nsp-button-hidden" ng-click="actions.open()">Edit</button>
             <button class="pure-button pure-button-primary pure-button-xsmall nsp-button-hidden" ng-click="actions.deleteProfile()">Delete profile</button>
         </span>
     </p>
@@ -18,6 +19,8 @@
         <fieldset>
             <label>Profile title</label>
             <input type="text" placeholder="title" ng-model="view.editingTitle" />
+            <label>Require geolocation?</label>
+            <input type="checkbox" ng-model="view.editingRequiresLocation" />
         </fieldset>
         <div>
             <button class="pure-button pure-button-primary" ng-disabled="view.okButtonDisabled()" ng-click="actions.save()">Save</button>

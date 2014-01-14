@@ -102,8 +102,10 @@ angular.module('myApp').controller('TransformationsEditCtrl', function($scope, S
     },
     istyle: function(t) {      
       return {fontWeight: 'bold', 'color': nspColorGenerator.getColor(t.sourceid, 1, .4)};
+    },    
+    inputName: function(input) {
+      return SensorsService.sensorTypes[input.sensor].name;
     }
-
   };
 
 

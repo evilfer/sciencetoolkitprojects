@@ -36,12 +36,37 @@ def list_project_data(user, project):
 
 
 
-def upload_data2(user, csv):
-    result = {'ok' : False}
+def upload_data2(user, body, csv):
+    result = {'ok' : True}
 
-    request = None
-    project = None
-    profile = None
+    idstr = body.get("id", None)
+
+    if idstr is None:
+        common.set_error(result, 'noid')
+        return result
+
+    idparts = idstr.split('.')
+    if len(idparts) != 3:
+        common.set_error(result, 'badid')
+        return result
+
+    request = {'id' : idparts[1], 'profileid': idparts[2]}
+    project = common.load_project(request, 'id')
+
+    if not project:
+        common.set_error(result, 'noproject')
+        return result
+
+    if not access.can_add_data(user, project):
+        common.set_error(result, 'noaccess')
+        return result
+
+    profile = common.get_profile(project, common.read_int(request, 'profileid', -1))
+
+    if not profile:
+        common.set_error(result, 'noprofile')
+        return result
+
 
     sensorNames = {}
     series = {}
@@ -52,36 +77,12 @@ def upload_data2(user, csv):
         if line[0:11] == '# profile: ':
             rid = line[11:]
             parts = rid.split('.')
-            if len(parts) != 3:
-                common.set_error(result, 'noid')
+            if len(parts) != 3 or parts[1] != idparts[1] or parts[2] != idparts[2]:
+                common.set_error(result, 'badfileid')
                 break
-
-            request = {'id' : parts[1], 'profileid': parts[2]}
-            project = common.load_project(request, 'id')
-
-            if not project:
-                common.set_error(result, 'noproject')
-                break
-
-            if not access.can_add_data(user, project):
-                common.set_error(result, 'noaccess')
-                break
-
-            profile = common.get_profile(project, common.read_int(request, 'profileid', -1))
-
-            if not profile:
-                common.set_error(result, 'noprofile')
-                break
-
-            result['ok'] = True
-
-        elif not profile:
-            common.set_error(result, 'badline')
-            break
 
         elif line[0:10] == '# sensor: ':
             parts = line[10:].split(' ', 2)
-            logging.info(parts)
             if len(parts) != 3:
                 common.set_error(result, 'nosensorid')
                 break
@@ -120,7 +121,8 @@ def upload_data2(user, csv):
 
 
     if result['ok']:
-        metadata = {'sensors': sensorNames}
+        metadata = body.get('metadata', {})
+        metadata['sensors'] = sensorNames
         seriesObj = Series(projectid=project.key.id(), profileid=profile.id, userid=user.user_id(), data=json.dumps(series), metadata=json.dumps(metadata))
         seriesObj.put();
         dataupdate.data_modified(project)
@@ -133,22 +135,23 @@ def get_vectors(profile, series):
     # output      -> {input_id -> {transformation -> data_array}}
 
     vectors0 = json.loads(series.data)
+    return vectors0
 
-    vectors = {}
+#    vectors = {}
 
-    for input_id_str in vectors0:
-        input_id = common.str_to_int(input_id_str, -1)
-        sensor_input = common.get_sensorinput(profile, input_id)
-        input_vectors = {}
-        input_vectors[0] = vectors0[input_id_str]
+#    for input_id_str in vectors0:
+#        input_id = common.str_to_int(input_id_str, -1)
+#        sensor_input = common.get_sensorinput(profile, input_id)
+#        input_vectors = {}
+#        input_vectors[0] = vectors0[input_id_str]
 
-        for t in sensor_input.transformations:
-            input_vectors[t.id] = maths.transform(t.transformation, np.array(input_vectors[t.sourceid])).tolist()
+#        for t in sensor_input.transformations:
+#            input_vectors[t.id] = maths.transform(t.transformation, np.array(input_vectors[t.sourceid])).tolist()
 
 
-        vectors[input_id_str] = input_vectors
+#        vectors[input_id_str] = input_vectors
 
-    return vectors;
+#    return vectors;
 
 
 

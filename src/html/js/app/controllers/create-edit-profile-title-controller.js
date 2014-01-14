@@ -7,6 +7,7 @@ angular.module('myApp').controller('CreateEditProfileTitleCtrl', function($scope
   $scope.view = {
     isOpen: false,
     editingTitle: null,
+    editingRequiresLocation: null,
     okButtonDisabled: function() {
       return !(this.editingTitle && this.editingTitle.length > 0);
     }
@@ -15,6 +16,7 @@ angular.module('myApp').controller('CreateEditProfileTitleCtrl', function($scope
   $scope.actions = {
     open: function() {
       $scope.view.editingTitle = $scope.profile.title;
+      $scope.view.editingRequiresLocation = $scope.profile.requires_location;
       $scope.view.isOpen = true;      
     },
     close: function() {
@@ -25,6 +27,7 @@ angular.module('myApp').controller('CreateEditProfileTitleCtrl', function($scope
     },
     save: function() {
       $scope.profile.title = $scope.view.editingTitle;
+      $scope.profile.requires_location = $scope.view.editingRequiresLocation;
       $scope.saveSrv.setProfileTitle($scope.project.id, $scope.profile);
       this.close();
     },

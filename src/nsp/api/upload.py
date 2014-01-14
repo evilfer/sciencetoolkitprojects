@@ -5,6 +5,8 @@ from nsp.logic import data_manager
 
 from google.appengine.api import users
 
+import json
+
 class UploadApi(webapp2.RequestHandler):
 
     def post(self):
@@ -15,9 +17,11 @@ class UploadApi(webapp2.RequestHandler):
 #                'profileid': self.request.get('profileid')
 #                }
 
+        body = json.loads(self.request.get('body'))
+
         file_content = self.request.POST.multi['file'].file.read()
 
-        result = data_manager.upload_data2(user, file_content)
+        result = data_manager.upload_data2(user, body, file_content)
 
         json.dump(result, self.response)
 
