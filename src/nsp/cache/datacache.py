@@ -49,6 +49,6 @@ def load_fresh_data(user, project):
                 result_series[series.profileid] = []
             profile = common.get_profile(project, series.profileid)
             vectors = data_manager.get_vectors(profile, series)
-            result_series[series.profileid].append({'userid': series.userid, 'data': vectors, 'metadata': json.loads(series.metadata)})
+            result_series[series.profileid].append({'id': series.key.id(), 'userid': series.userid, 'data': vectors, 'metadata': json.loads(series.metadata)})
 
     return result_series

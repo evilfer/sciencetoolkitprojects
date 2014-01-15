@@ -10,7 +10,7 @@ angular.module('myApp').directive('nqMap', [function() {
         var map = scope.maps[scope.profileid];
         var dataList = scope.project.series[scope.profileid];
 
-        var renderer = new nspMapRenderer(element, scope.chart, dataList);
+        var renderer = new nspMapRenderer(element, map, dataList);
         renderer.update();
       }
     };

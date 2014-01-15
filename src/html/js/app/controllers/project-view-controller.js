@@ -9,7 +9,6 @@ myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdServ
 
   $scope.syncService = SyncService;
   
-
   if ($scope.request.projectId) {
     $scope.project = null;
     $scope.ready = false;
@@ -57,7 +56,11 @@ myApp.controller('ProjectViewCtrl', function($scope, $stateParams, ProjectIdServ
                 }
                 
                 if (type === 'x' || type === 'tx') {
-                  $scope.profileMaps[profile_id][variable_id] = title;
+                  if (! (input_id in $scope.profileMaps[profile_id])) {
+                    $scope.profileMaps[profile_id][input_id] = {};
+                  }
+                  
+                  $scope.profileMaps[profile_id][input_id][variable_id] = title;
                 }
                 
                 $scope.profileCharts[profile_id][input_id + "." + variable_id] = {

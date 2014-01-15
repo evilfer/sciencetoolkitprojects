@@ -1,21 +1,48 @@
 
 var nspMapRenderer = function(element, mapVariables, dataList) {
   this.element = element;
-  this.mapVariables = mapVariables;
+  
+  this.mapVariables = [];
+  for (var input_id in mapVariables) {
+    for (var variable_id in mapVariables[input_id]) {
+      this.mapVariables.push({input: input_id, variable: variable_id, label: mapVariables[input_id][variable_id]});
+    }      
+  }
+  
   this.dataList = dataList;
   this.map = null;
   this.markers = {};
-
-
-  this.icons = {
-    'red': 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
-    'green': 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-  };
+  
+  var max = 0;
+  var min = 0;
+  
+  for (var i = 0; i < dataList.length; i++) {
+    for (var vi = 0; vi < this.mapVariables.length; vi++) {
+      var mv = this.mapVariables[vi];
+      console.log(mv.label);
+      var value = this.dataList[i].data[mv.input][mv.variable][0][0];
+      max = Math.max(max, value);
+      min = Math.min(min, value);
+    }
+  }
+  
+  this.iconMaker = new nspMapIcons(this.mapVariables.length, max, min);
 
   this.needToInitCloseMarkers = false;
 
   this.init();
   this.update();
+};
+
+nspMapRenderer.prototype.getIcon = function(i, mode) {
+  var values = [];
+  for (var vi = 0; vi < this.mapVariables.length; vi++) {
+    var mv = this.mapVariables[vi];
+    var value = this.dataList[i].data[mv.input][mv.variable][0][0];
+    values.push(value);
+  }
+  
+  return this.iconMaker.getIcon(values, mode);
 };
 
 nspMapRenderer.prototype.getLatLng = function(i, forceObj) {
@@ -75,21 +102,20 @@ nspMapRenderer.prototype.update = function() {
     var pos = this.getLatLng(i);
     if (pos) {
 
-      var goldStar = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><linearGradient id='gradient'><stop offset='10%' stop-color='#F00'/><stop offset='90%' stop-color='#fcc'/> </linearGradient><rect fill='url(#gradient)' x='0' y='0' width='100%' height='100%'/></svg>";
-
       var marker = new google.maps.Marker({
         position: pos,
         map: this.map,
         animation: google.maps.Animation.DROP,
-        icon: goldStar, //this.icons['green'],
+        icon: this.getIcon(i, 'normal'),
         title: "" + (i + 1),
         series_id: i
       });
 
+console.log(this.dataList[i]);
       this.oms.addMarker(marker);
       this.markers[i] = {
         marker: marker,
-        infowindow: new google.maps.InfoWindow({content: "series " + (i + 1)})
+        infowindow: new google.maps.InfoWindow({content: "series " + (i + 1) + '<br/>' + this.dataList[i].id})
       };
     }
   }

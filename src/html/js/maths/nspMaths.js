@@ -13,7 +13,7 @@ var nspMaths = {
       
       for (var seriesI = 0; seriesI < rawProfileSeriesList.length; seriesI ++) {
         var rawProfileSeries = rawProfileSeriesList[seriesI];
-        var tProfileSeries = {userid: rawProfileSeries.userid, data: {}, metadata: rawProfileSeries.metadata};
+        var tProfileSeries = {id: rawProfileSeries.id, userid: rawProfileSeries.userid, data: {}, metadata: rawProfileSeries.metadata};
         
         for (var input in rawProfileSeries.data) {
           var rawProfileSeriesInputData = rawProfileSeries.data[input];
